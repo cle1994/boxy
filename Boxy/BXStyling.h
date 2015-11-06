@@ -17,6 +17,8 @@
 + (UIColor *)lightColor;
 
 + (UIColor *)primaryColor;
++ (UIColor *)secondaryColor;
 + (UIColor *)accentColor;
++ (UIColor *)dangerColor;
 
 @end

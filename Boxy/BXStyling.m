@@ -35,8 +35,16 @@
     return [self colorFromHexString:@"#4ECDC4"];
 }
 
-+ (UIColor *)accentColor {
++ (UIColor *)secondaryColor {
     return [self colorFromHexString:@"#C7F464"];
+}
+
++ (UIColor *)accentColor {
+    return [self colorFromHexString:@"#FF6B6B"];
+}
+
++ (UIColor *)dangerColor {
+    return [self colorFromHexString:@"#C44D58"];
 }
 
 @end
