@@ -14,6 +14,9 @@
 		AA68B0BC1BEC34FA0095984A /* Cartfile in Resources */ = {isa = PBXBuildFile; fileRef = AA68B0BB1BEC34FA0095984A /* Cartfile */; };
 		AA68B0BF1BEC358E0095984A /* BXStyling.m in Sources */ = {isa = PBXBuildFile; fileRef = AA68B0BE1BEC358E0095984A /* BXStyling.m */; };
 		AA68B0C21BEC391D0095984A /* AFNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA68B0C11BEC391D0095984A /* AFNetworking.framework */; };
+		AA68B0C61BEC39BB0095984A /* BXNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA68B0C51BEC39BB0095984A /* BXNavigationController.m */; };
+		AA68B0C91BEC3C110095984A /* BXConnectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA68B0C81BEC3C110095984A /* BXConnectViewController.m */; };
+		AA68B0D01BEC3E640095984A /* BLE.m in Sources */ = {isa = PBXBuildFile; fileRef = AA68B0CE1BEC3E640095984A /* BLE.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +31,13 @@
 		AA68B0BD1BEC358E0095984A /* BXStyling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXStyling.h; sourceTree = "<group>"; };
 		AA68B0BE1BEC358E0095984A /* BXStyling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXStyling.m; sourceTree = "<group>"; };
 		AA68B0C11BEC391D0095984A /* AFNetworking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AFNetworking.framework; path = ../Carthage/Build/iOS/AFNetworking.framework; sourceTree = "<group>"; };
+		AA68B0C41BEC39BB0095984A /* BXNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXNavigationController.h; sourceTree = "<group>"; };
+		AA68B0C51BEC39BB0095984A /* BXNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXNavigationController.m; sourceTree = "<group>"; };
+		AA68B0C71BEC3C110095984A /* BXConnectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXConnectViewController.h; sourceTree = "<group>"; };
+		AA68B0C81BEC3C110095984A /* BXConnectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXConnectViewController.m; sourceTree = "<group>"; };
+		AA68B0CD1BEC3E640095984A /* BLE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BLE.h; path = BLE/BLE.h; sourceTree = SOURCE_ROOT; };
+		AA68B0CE1BEC3E640095984A /* BLE.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BLE.m; path = BLE/BLE.m; sourceTree = SOURCE_ROOT; };
+		AA68B0CF1BEC3E640095984A /* BLEDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BLEDefines.h; path = BLE/BLEDefines.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +81,10 @@
 				AA68B0AA1BEC34E60095984A /* Supporting Files */,
 				AA68B0BD1BEC358E0095984A /* BXStyling.h */,
 				AA68B0BE1BEC358E0095984A /* BXStyling.m */,
+				AA68B0C41BEC39BB0095984A /* BXNavigationController.h */,
+				AA68B0C51BEC39BB0095984A /* BXNavigationController.m */,
+				AA68B0C71BEC3C110095984A /* BXConnectViewController.h */,
+				AA68B0C81BEC3C110095984A /* BXConnectViewController.m */,
 			);
 			path = Boxy;
 			sourceTree = "<group>";
@@ -86,9 +100,20 @@
 		AA68B0C01BEC39090095984A /* frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				AA68B0CC1BEC3E450095984A /* BLE */,
 				AA68B0C11BEC391D0095984A /* AFNetworking.framework */,
 			);
 			name = frameworks;
+			sourceTree = "<group>";
+		};
+		AA68B0CC1BEC3E450095984A /* BLE */ = {
+			isa = PBXGroup;
+			children = (
+				AA68B0CD1BEC3E640095984A /* BLE.h */,
+				AA68B0CE1BEC3E640095984A /* BLE.m */,
+				AA68B0CF1BEC3E640095984A /* BLEDefines.h */,
+			);
+			name = BLE;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -180,6 +205,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA68B0AF1BEC34E60095984A /* AppDelegate.m in Sources */,
+				AA68B0C61BEC39BB0095984A /* BXNavigationController.m in Sources */,
+				AA68B0C91BEC3C110095984A /* BXConnectViewController.m in Sources */,
+				AA68B0D01BEC3E640095984A /* BLE.m in Sources */,
 				AA68B0BF1BEC358E0095984A /* BXStyling.m in Sources */,
 				AA68B0AC1BEC34E60095984A /* main.m in Sources */,
 			);
