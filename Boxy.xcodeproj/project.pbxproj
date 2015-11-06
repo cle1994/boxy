@@ -11,6 +11,7 @@
 		AA68B0AF1BEC34E60095984A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AA68B0AE1BEC34E60095984A /* AppDelegate.m */; };
 		AA68B0B11BEC34E60095984A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA68B0B01BEC34E60095984A /* Assets.xcassets */; };
 		AA68B0B41BEC34E60095984A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA68B0B21BEC34E60095984A /* LaunchScreen.storyboard */; };
+		AA68B0BC1BEC34FA0095984A /* Cartfile in Resources */ = {isa = PBXBuildFile; fileRef = AA68B0BB1BEC34FA0095984A /* Cartfile */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +22,7 @@
 		AA68B0B01BEC34E60095984A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AA68B0B31BEC34E60095984A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AA68B0B51BEC34E60095984A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AA68B0BB1BEC34FA0095984A /* Cartfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,6 +39,7 @@
 		AA68B09E1BEC34E60095984A = {
 			isa = PBXGroup;
 			children = (
+				AA68B0BB1BEC34FA0095984A /* Cartfile */,
 				AA68B0A91BEC34E60095984A /* Boxy */,
 				AA68B0A81BEC34E60095984A /* Products */,
 			);
@@ -128,6 +131,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA68B0BC1BEC34FA0095984A /* Cartfile in Resources */,
 				AA68B0B11BEC34E60095984A /* Assets.xcassets in Resources */,
 				AA68B0B41BEC34E60095984A /* LaunchScreen.storyboard in Resources */,
 			);
