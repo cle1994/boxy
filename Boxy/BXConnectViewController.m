@@ -34,7 +34,16 @@ static NSString *BXAvailablePeripheralCellIdentifier =
 - (instancetype)init {
     if (self = [super init]) {
         self.title = @"Available Connections";
-        self.view.backgroundColor = [BXStyling lightColor];
+        self.view.backgroundColor = [BXStyling darkColor];
+
+        self.navigationItem.rightBarButtonItem =
+            [[UIBarButtonItem alloc] initWithTitle:@"Scan"
+                                             style:UIBarButtonItemStylePlain
+                                            target:self
+                                            action:@selector(scanForDevices)];
+
+        [self.navigationItem.rightBarButtonItem
+            setTintColor:[BXStyling lightColor]];
 
         _ble = [[BLE alloc] init];
 
@@ -43,7 +52,6 @@ static NSString *BXAvailablePeripheralCellIdentifier =
         _isFindingLast = NO;
 
         [self.view addSubview:_availableDevicesTableView];
-        [self _installConstraints];
     }
 
     return self;
@@ -51,6 +59,8 @@ static NSString *BXAvailablePeripheralCellIdentifier =
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    _availableDevicesTableView.tableFooterView = [UIView new];
 
     [_ble controlSetup];
     _ble.delegate = self;
@@ -64,23 +74,29 @@ static NSString *BXAvailablePeripheralCellIdentifier =
     [self scanForDevices];
 }
 
-- (void)_installConstraints {
-    NSDictionary *views =
-        NSDictionaryOfVariableBindings(_availableDevicesTableView);
-    _availableDevicesTableView.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addConstraints:[NSLayoutConstraint
-                                  constraintsWithVisualFormat:
-                                      @"V:|-_availableDevicesTableView-|"
-                                                      options:0
-                                                      metrics:nil
-                                                        views:views]];
-    [self.view addConstraints:[NSLayoutConstraint
-                                  constraintsWithVisualFormat:
-                                      @"H:|-_availableDevicesTableView-|"
-                                                      options:0
-                                                      metrics:nil
-                                                        views:views]];
+- (void)viewDidLayoutSubviews {
+    CGSize viewSize = self.view.bounds.size;
+    [_availableDevicesTableView
+        setFrame:CGRectMake(0, 0, viewSize.width, viewSize.height)];
 }
+
+//- (void)_installConstraints {
+//    NSDictionary *views =
+//        NSDictionaryOfVariableBindings(_availableDevicesTableView);
+//    _availableDevicesTableView.translatesAutoresizingMaskIntoConstraints = NO;
+//    [self.view addConstraints:[NSLayoutConstraint
+//                                  constraintsWithVisualFormat:
+//                                      @"V:|-_availableDevicesTableView-|"
+//                                                      options:0
+//                                                      metrics:nil
+//                                                        views:views]];
+//    [self.view addConstraints:[NSLayoutConstraint
+//                                  constraintsWithVisualFormat:
+//                                      @"H:|-_availableDevicesTableView-|"
+//                                                      options:0
+//                                                      metrics:nil
+//                                                        views:views]];
+//}
 
 #pragma Scan for Devices
 
