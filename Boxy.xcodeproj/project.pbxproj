@@ -12,6 +12,8 @@
 		AA68B0B11BEC34E60095984A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA68B0B01BEC34E60095984A /* Assets.xcassets */; };
 		AA68B0B41BEC34E60095984A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA68B0B21BEC34E60095984A /* LaunchScreen.storyboard */; };
 		AA68B0BC1BEC34FA0095984A /* Cartfile in Resources */ = {isa = PBXBuildFile; fileRef = AA68B0BB1BEC34FA0095984A /* Cartfile */; };
+		AA68B0BF1BEC358E0095984A /* BXStyling.m in Sources */ = {isa = PBXBuildFile; fileRef = AA68B0BE1BEC358E0095984A /* BXStyling.m */; };
+		AA68B0C21BEC391D0095984A /* AFNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA68B0C11BEC391D0095984A /* AFNetworking.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +25,9 @@
 		AA68B0B31BEC34E60095984A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AA68B0B51BEC34E60095984A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AA68B0BB1BEC34FA0095984A /* Cartfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
+		AA68B0BD1BEC358E0095984A /* BXStyling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXStyling.h; sourceTree = "<group>"; };
+		AA68B0BE1BEC358E0095984A /* BXStyling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXStyling.m; sourceTree = "<group>"; };
+		AA68B0C11BEC391D0095984A /* AFNetworking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AFNetworking.framework; path = ../Carthage/Build/iOS/AFNetworking.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -30,6 +35,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA68B0C21BEC391D0095984A /* AFNetworking.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,12 +62,15 @@
 		AA68B0A91BEC34E60095984A /* Boxy */ = {
 			isa = PBXGroup;
 			children = (
+				AA68B0C01BEC39090095984A /* frameworks */,
 				AA68B0AD1BEC34E60095984A /* AppDelegate.h */,
 				AA68B0AE1BEC34E60095984A /* AppDelegate.m */,
 				AA68B0B01BEC34E60095984A /* Assets.xcassets */,
 				AA68B0B21BEC34E60095984A /* LaunchScreen.storyboard */,
 				AA68B0B51BEC34E60095984A /* Info.plist */,
 				AA68B0AA1BEC34E60095984A /* Supporting Files */,
+				AA68B0BD1BEC358E0095984A /* BXStyling.h */,
+				AA68B0BE1BEC358E0095984A /* BXStyling.m */,
 			);
 			path = Boxy;
 			sourceTree = "<group>";
@@ -74,6 +83,14 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		AA68B0C01BEC39090095984A /* frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AA68B0C11BEC391D0095984A /* AFNetworking.framework */,
+			);
+			name = frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -84,6 +101,7 @@
 				AA68B0A31BEC34E60095984A /* Sources */,
 				AA68B0A41BEC34E60095984A /* Frameworks */,
 				AA68B0A51BEC34E60095984A /* Resources */,
+				AA68B0C31BEC392A0095984A /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -139,12 +157,30 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		AA68B0C31BEC392A0095984A /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/AFNetworking.framework",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		AA68B0A31BEC34E60095984A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				AA68B0AF1BEC34E60095984A /* AppDelegate.m in Sources */,
+				AA68B0BF1BEC358E0095984A /* BXStyling.m in Sources */,
 				AA68B0AC1BEC34E60095984A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -247,6 +283,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = Boxy/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.christianle.Boxy;
@@ -258,6 +298,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = Boxy/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.christianle.Boxy;
