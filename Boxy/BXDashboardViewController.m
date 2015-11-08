@@ -15,6 +15,15 @@
 
 @implementation BXDashboardViewController
 
+- (instancetype)init {
+    if (self = [super init]) {
+        self.title = @"Dashboard";
+        self.view.backgroundColor = [BXStyling lightColor];
+    }
+
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
 }

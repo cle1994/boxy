@@ -34,7 +34,7 @@ static NSString *BXAvailablePeripheralCellIdentifier =
 - (instancetype)init {
     if (self = [super init]) {
         self.title = @"Available Connections";
-        self.view.backgroundColor = [BXStyling darkColor];
+        self.view.backgroundColor = [BXStyling lightColor];
 
         self.navigationItem.rightBarButtonItem =
             [[UIBarButtonItem alloc] initWithTitle:@"Scan"
