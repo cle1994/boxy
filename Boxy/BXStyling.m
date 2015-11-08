@@ -28,7 +28,7 @@
 }
 
 + (UIColor *)lightColor {
-    return [self colorFromHexString:@"#f0f0f0"];
+    return [self colorFromHexString:@"#F3F3F3"];
 }
 
 + (UIColor *)primaryColor {

@@ -19,6 +19,9 @@
 @property (strong, nonatomic)
     BXDashboardViewController *dashboardViewController;
 @property (strong, nonatomic) UITableView *availableDevicesTableView;
+@property (strong, nonatomic) UIView *headerView;
+@property (strong, nonatomic) UISwitch *useLastConnectedSwitch;
+@property (strong, nonatomic) UILabel *useLastConnectedLabel;
 @property (strong, nonatomic) NSMutableArray *devices;
 @property (strong, nonatomic) NSString *lastUUID;
 @property (nonatomic) BOOL isFindingLast;
@@ -48,8 +51,41 @@ static NSString *BXAvailablePeripheralCellIdentifier =
         _ble = [[BLE alloc] init];
 
         _availableDevicesTableView = [[UITableView alloc] init];
+        _headerView = [[UIView alloc] init];
+        _useLastConnectedLabel = [[UILabel alloc] init];
+        _useLastConnectedSwitch = [[UISwitch alloc] init];
         _devices = [NSMutableArray new];
         _isFindingLast = NO;
+
+        CGFloat headerHeight = 60;
+        CGFloat headerInset = 25;
+        CGSize buttonSize = CGSizeMake(51, 31);
+        CGSize viewSize = self.view.bounds.size;
+
+        [_useLastConnectedSwitch
+            setFrame:CGRectMake(viewSize.width - headerInset - buttonSize.width,
+                                (headerHeight - buttonSize.height) / 2,
+                                buttonSize.width, buttonSize.height)];
+        [_useLastConnectedSwitch setTintColor:[BXStyling secondaryColor]];
+        [_useLastConnectedSwitch setOnTintColor:[BXStyling primaryColor]];
+        [_useLastConnectedSwitch addTarget:self
+                                    action:@selector(toggleUseLastConnection:)
+                          forControlEvents:UIControlEventValueChanged];
+        
+        [_useLastConnectedLabel
+            setFrame:CGRectMake(headerInset, 0,
+                                viewSize.width - (headerInset * 2) -
+                                    buttonSize.width,
+                                headerHeight)];
+        _useLastConnectedLabel.text = @"Use Last Connected Device";
+        _useLastConnectedLabel.textColor = [BXStyling darkColor];
+
+        [_headerView addSubview:_useLastConnectedLabel];
+        [_headerView addSubview:_useLastConnectedSwitch];
+        [_headerView setBackgroundColor:[BXStyling lightColor]];
+        [_headerView setFrame:CGRectMake(0, 0, self.view.bounds.size.width,
+                                         headerHeight)];
+        _availableDevicesTableView.tableHeaderView = _headerView;
 
         [self.view addSubview:_availableDevicesTableView];
     }
@@ -59,8 +95,6 @@ static NSString *BXAvailablePeripheralCellIdentifier =
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    _availableDevicesTableView.tableFooterView = [UIView new];
 
     [_ble controlSetup];
     _ble.delegate = self;
@@ -76,6 +110,9 @@ static NSString *BXAvailablePeripheralCellIdentifier =
 
 - (void)viewDidLayoutSubviews {
     CGSize viewSize = self.view.bounds.size;
+    //    CGFloat footerHeight = viewSize.height * (1/5);
+
+    //    [_headerView setFrame:CGRectMake(0, 0, viewSize.width, footerHeight)];
     [_availableDevicesTableView
         setFrame:CGRectMake(0, 0, viewSize.width, viewSize.height)];
 }
@@ -149,6 +186,18 @@ static NSString *BXAvailablePeripheralCellIdentifier =
     }
 
     [_availableDevicesTableView reloadData];
+}
+
+- (void)toggleUseLastConnection:(UISwitch *)paramSender {
+    
+    if ([paramSender isOn]){
+        _isFindingLast = YES;
+        NSLog(@"The switch is turned on.");
+    } else {
+        _isFindingLast = NO;
+        NSLog(@"The switch is turned off.");
+    }
+    
 }
 
 #pragma UITableView Delegate
