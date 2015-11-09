@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "BXNavigationController.h"
 #import "BXConnectViewController.h"
+#import "BXStyling.h"
 
 @interface AppDelegate ()
 
@@ -20,6 +21,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
+    [self.window setTintColor:[BXStyling lightColor]];
     [self.window makeKeyAndVisible];
     self.window.rootViewController = [[BXNavigationController alloc] initWithRootViewController:[[BXConnectViewController alloc] init]];
     return YES;

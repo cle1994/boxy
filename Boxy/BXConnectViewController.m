@@ -48,14 +48,15 @@ static NSString *BXAvailablePeripheralCellIdentifier =
         [self.navigationItem.rightBarButtonItem
             setTintColor:[BXStyling lightColor]];
 
-        _ble = [[BLE alloc] init];
-
         _availableDevicesTableView = [[UITableView alloc] init];
         _headerView = [[UIView alloc] init];
         _useLastConnectedLabel = [[UILabel alloc] init];
         _useLastConnectedSwitch = [[UISwitch alloc] init];
         _devices = [NSMutableArray new];
         _isFindingLast = NO;
+
+        _availableDevicesTableView.delegate = self;
+        _availableDevicesTableView.dataSource = self;
 
         CGFloat headerHeight = 60;
         CGFloat headerInset = 25;
@@ -71,7 +72,7 @@ static NSString *BXAvailablePeripheralCellIdentifier =
         [_useLastConnectedSwitch addTarget:self
                                     action:@selector(toggleUseLastConnection:)
                           forControlEvents:UIControlEventValueChanged];
-        
+
         [_useLastConnectedLabel
             setFrame:CGRectMake(headerInset, 0,
                                 viewSize.width - (headerInset * 2) -
@@ -96,8 +97,11 @@ static NSString *BXAvailablePeripheralCellIdentifier =
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    [_ble controlSetup];
-    _ble.delegate = self;
+    if (_ble == nil) {
+        _ble = [[BLE alloc] init];
+        [_ble controlSetup];
+        _ble.delegate = self;
+    }
 
     _lastUUID =
         [[NSUserDefaults standardUserDefaults] objectForKey:UUIDPrefKey];
@@ -110,30 +114,9 @@ static NSString *BXAvailablePeripheralCellIdentifier =
 
 - (void)viewDidLayoutSubviews {
     CGSize viewSize = self.view.bounds.size;
-    //    CGFloat footerHeight = viewSize.height * (1/5);
-
-    //    [_headerView setFrame:CGRectMake(0, 0, viewSize.width, footerHeight)];
     [_availableDevicesTableView
         setFrame:CGRectMake(0, 0, viewSize.width, viewSize.height)];
 }
-
-//- (void)_installConstraints {
-//    NSDictionary *views =
-//        NSDictionaryOfVariableBindings(_availableDevicesTableView);
-//    _availableDevicesTableView.translatesAutoresizingMaskIntoConstraints = NO;
-//    [self.view addConstraints:[NSLayoutConstraint
-//                                  constraintsWithVisualFormat:
-//                                      @"V:|-_availableDevicesTableView-|"
-//                                                      options:0
-//                                                      metrics:nil
-//                                                        views:views]];
-//    [self.view addConstraints:[NSLayoutConstraint
-//                                  constraintsWithVisualFormat:
-//                                      @"H:|-_availableDevicesTableView-|"
-//                                                      options:0
-//                                                      metrics:nil
-//                                                        views:views]];
-//}
 
 #pragma Scan for Devices
 
@@ -149,6 +132,8 @@ static NSString *BXAvailablePeripheralCellIdentifier =
         _ble.peripherals = nil;
     }
 
+    [_ble findBLEPeripherals:3];
+
     [NSTimer scheduledTimerWithTimeInterval:(float)3.0
                                      target:self
                                    selector:@selector(connectionTimer:)
@@ -163,8 +148,8 @@ static NSString *BXAvailablePeripheralCellIdentifier =
                 CBPeripheral *peripheral = [_ble.peripherals objectAtIndex:i];
                 NSString *peripheralUUID =
                     [self getUUIDStringForPeripheral:peripheral];
-                if (!peripheralUUID ||
-                    [peripheralUUID isKindOfClass:[NSNull class]]) {
+                if (peripheralUUID ||
+                    ![peripheralUUID isKindOfClass:[NSNull class]]) {
                     if ([_lastUUID isEqualToString:peripheralUUID]) {
                         [_ble connectPeripheral:peripheral];
                     }
@@ -177,27 +162,24 @@ static NSString *BXAvailablePeripheralCellIdentifier =
                 CBPeripheral *peripheral = [_ble.peripherals objectAtIndex:i];
                 NSString *peripheralUUID =
                     [self getUUIDStringForPeripheral:peripheral];
-                if (!peripheralUUID ||
-                    [peripheralUUID isKindOfClass:[NSNull class]]) {
+                if (peripheralUUID ||
+                    ![peripheralUUID isKindOfClass:[NSNull class]]) {
                     [_devices addObject:peripheral];
                 }
             }
         }
     }
-
     [_availableDevicesTableView reloadData];
 }
 
 - (void)toggleUseLastConnection:(UISwitch *)paramSender {
-    
-    if ([paramSender isOn]){
+    if ([paramSender isOn]) {
         _isFindingLast = YES;
         NSLog(@"The switch is turned on.");
     } else {
         _isFindingLast = NO;
         NSLog(@"The switch is turned off.");
     }
-    
 }
 
 #pragma UITableView Delegate
