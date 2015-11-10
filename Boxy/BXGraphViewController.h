@@ -15,6 +15,5 @@
 @property (nonatomic) int pageIndex;
 
 - (void)setDataCount:(int)count range:(double)range;
-- (void)forceAnimation;
 
 @end

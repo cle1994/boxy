@@ -17,7 +17,7 @@
 @property (strong, nonatomic) UIPageViewController *pageViewController;
 @property (strong, nonatomic) BXSyncViewController *syncViewController;
 @property (strong, nonatomic) BXGraphViewController *graphViewController;
-@property (strong, nonatomic) UISegmentedControl *segmentedControl;
+@property (strong, nonatomic) UISegmentedControl *pageViewSegmentedSwitcher;
 @property (strong, nonatomic) NSMutableArray *pageViewChildren;
 
 @end
@@ -33,7 +33,7 @@
             [BXStyling lightColor];
         self.view.backgroundColor = [BXStyling lightColor];
 
-        [self setupDefaults];
+        [self setupPageView];
     }
 
     return self;
@@ -43,32 +43,8 @@
     [super viewDidLoad];
 
     if (_pageViewChildren.count == 0) {
-        [self setupDefaults];
+        [self setupPageView];
     }
-
-    for (int i = 0; i < _pageViewChildren.count; i++) {
-        [(UIViewController<BXPageViewChildProtocol> *)_pageViewChildren[i]
-            setPageIndex:i];
-    }
-
-    _pageViewController = [[UIPageViewController alloc]
-        initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll
-          navigationOrientation:
-              UIPageViewControllerNavigationOrientationHorizontal
-                        options:nil];
-
-    NSArray *viewController = [NSArray arrayWithObject:_syncViewController];
-
-    [_pageViewController.view setFrame:[self.view bounds]];
-    [_pageViewController
-        setViewControllers:viewController
-                 direction:UIPageViewControllerNavigationDirectionForward
-                  animated:NO
-                completion:nil];
-
-    [self addChildViewController:_pageViewController];
-    [self.view addSubview:_pageViewController.view];
-    [_pageViewController didMoveToParentViewController:self];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -81,7 +57,7 @@
     [_pageViewController.view
         setFrame:CGRectMake(0, 0, viewSize.width,
                             viewSize.height - segmentControlHeight)];
-    [_segmentedControl
+    [_pageViewSegmentedSwitcher
         setFrame:CGRectMake(segmentControlInset.width,
                             viewSize.height - segmentControlHeight +
                                 segmentControlInset.height,
@@ -90,14 +66,15 @@
                                 (2 * segmentControlInset.height))];
 }
 
-- (void)setupDefaults {
+- (void)setupPageView {
     NSArray *pageTitles = [NSArray arrayWithObjects:@"Sync", @"Graph", nil];
-    _segmentedControl = [[UISegmentedControl alloc] initWithItems:pageTitles];
-    [_segmentedControl addTarget:self
-                          action:@selector(switchPages:)
-                forControlEvents:UIControlEventValueChanged];
-    _segmentedControl.selectedSegmentIndex = 0;
-    _segmentedControl.tintColor = [BXStyling darkColor];
+    _pageViewSegmentedSwitcher =
+        [[UISegmentedControl alloc] initWithItems:pageTitles];
+    [_pageViewSegmentedSwitcher addTarget:self
+                                   action:@selector(switchPages:)
+                         forControlEvents:UIControlEventValueChanged];
+    _pageViewSegmentedSwitcher.selectedSegmentIndex = 0;
+    _pageViewSegmentedSwitcher.tintColor = [BXStyling darkColor];
 
     _syncViewController = [[BXSyncViewController alloc] init];
     _graphViewController = [[BXGraphViewController alloc] init];
@@ -105,9 +82,33 @@
     _pageViewChildren = [[NSMutableArray alloc] init];
     [_pageViewChildren addObject:_syncViewController];
     [_pageViewChildren addObject:_graphViewController];
+    for (int i = 0; i < _pageViewChildren.count; i++) {
+        [(UIViewController<BXPageViewChildProtocol> *)_pageViewChildren[i]
+            setPageIndex:i];
+    }
 
-    [self.view addSubview:_segmentedControl];
+    _pageViewController = [[UIPageViewController alloc]
+        initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll
+          navigationOrientation:
+              UIPageViewControllerNavigationOrientationHorizontal
+                        options:nil];
+
+    [_pageViewController.view setFrame:[self.view bounds]];
+    [_pageViewController
+        setViewControllers:[NSArray arrayWithObject:_pageViewChildren[0]]
+                 direction:UIPageViewControllerNavigationDirectionForward
+                  animated:NO
+                completion:nil];
+
+    [self addChildViewController:_pageViewController];
+
+    [self.view addSubview:_pageViewSegmentedSwitcher];
+    [self.view addSubview:_pageViewController.view];
+
+    [_pageViewController didMoveToParentViewController:self];
 }
+
+#pragma mark - Handle Bluetooth Data
 
 - (void)handleReceivedData:(unsigned char *)data length:(int)length {
     NSData *d = [NSData dataWithBytes:data length:length];
@@ -119,21 +120,26 @@
     [_syncViewController updateData:s];
 }
 
+#pragma mark - Handle Page Switching
+
 - (void)switchPages:(UISegmentedControl *)segmentedControl {
     NSInteger index = segmentedControl.selectedSegmentIndex;
     UIViewController *vc = _pageViewChildren[index];
-    
-    if ([vc respondsToSelector:@selector(forceAnimation)]) {
-        [(BXGraphViewController *) vc forceAnimation];
-    }
-    
+
     [_pageViewController
-        setViewControllers:
-            [NSArray
-                arrayWithObject:vc]
+        setViewControllers:[NSArray arrayWithObject:vc]
                  direction:UIPageViewControllerNavigationDirectionForward
                   animated:NO
                 completion:nil];
+}
+
+#pragma mark - Constraints
+
+- (void)_installConstraints {
+    NSDictionary *views = NSDictionaryOfVariableBindings(
+        _graphViewController.view, _pageViewSegmentedSwitcher);
+    _graphViewController.view.translatesAutoresizingMaskIntoConstraints = NO;
+    _pageViewSegmentedSwitcher.translatesAutoresizingMaskIntoConstraints = NO;
 }
 
 @end

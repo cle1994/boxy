@@ -118,7 +118,7 @@ static NSString *BXAvailablePeripheralCellIdentifier =
         setFrame:CGRectMake(0, 0, viewSize.width, viewSize.height)];
 }
 
-#pragma Scan for Devices
+#pragma mark - Device Scanning
 
 - (void)scanForDevices {
     if (_ble.activePeripheral) {
@@ -182,7 +182,7 @@ static NSString *BXAvailablePeripheralCellIdentifier =
     }
 }
 
-#pragma UITableView Delegate
+#pragma mark - UITableView Delegate
 
 - (NSInteger)tableView:(UITableView *)tableView
  numberOfRowsInSection:(NSInteger)section {
@@ -216,7 +216,7 @@ static NSString *BXAvailablePeripheralCellIdentifier =
     [_ble connectPeripheral:_devices[indexPath.row]];
 }
 
-#pragma BLE Delegate
+#pragma mark - BLE Delegate
 
 - (void)bleDidConnect {
     _lastUUID = [self getUUIDStringForPeripheral:_ble.activePeripheral];

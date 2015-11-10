@@ -75,6 +75,13 @@
         setFrame:CGRectMake(20, 20, viewSize.width - 40, viewSize.height - 40)];
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self forceAnimation];
+}
+
+#pragma mark - Render Graph
+
 - (void)setDataCount:(int)count range:(double)range {
     NSMutableArray *xVals = [[NSMutableArray alloc] init];
     for (int i = 0; i < count; i += 1) {
@@ -121,7 +128,7 @@
                                 easingOption:ChartEasingOptionEaseInOutQuart];
 }
 
-#pragma ChartViewDelegate
+#pragma mark - Chart View Delegate
 
 - (void)chartValueSelected:(ChartViewBase *__nonnull)chartView
                      entry:(ChartDataEntry *__nonnull)entry
