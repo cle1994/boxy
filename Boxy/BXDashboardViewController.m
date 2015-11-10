@@ -6,15 +6,19 @@
 //  Copyright © 2015 christianle. All rights reserved.
 //
 
-@import Charts;
-
 #import "BXDashboardViewController.h"
+#import "BXGraphViewController.h"
+#import "BXSyncViewController.h"
 #import "BXStyling.h"
+#import "BXPageViewChildProtocol.h"
 
-@interface BXDashboardViewController ()<ChartViewDelegate>
+@interface BXDashboardViewController ()
 
-@property (strong, nonatomic) LineChartView *lineChartView;
-@property (strong, nonatomic) UILabel *helloCountView;
+@property (strong, nonatomic) UIPageViewController *pageViewController;
+@property (strong, nonatomic) BXSyncViewController *syncViewController;
+@property (strong, nonatomic) BXGraphViewController *graphViewController;
+@property (strong, nonatomic) UISegmentedControl *segmentedControl;
+@property (strong, nonatomic) NSMutableArray *pageViewChildren;
 
 @end
 
@@ -29,14 +33,7 @@
             [BXStyling lightColor];
         self.view.backgroundColor = [BXStyling lightColor];
 
-        _helloCountView = [[UILabel alloc] init];
-        _helloCountView.textAlignment = NSTextAlignmentCenter;
-        _helloCountView.font = [UIFont systemFontOfSize:25];
-        _helloCountView.backgroundColor = [BXStyling lightColor];
-        _helloCountView.textColor = [BXStyling darkColor];
-
-        [self.view addSubview:_lineChartView];
-        [self.view addSubview:_helloCountView];
+        [self setupDefaults];
     }
 
     return self;
@@ -45,43 +42,71 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    _lineChartView = [[LineChartView alloc] init];
-    _lineChartView.delegate = self;
-    _lineChartView.descriptionText = @"Last Workout";
-    _lineChartView.noDataTextDescription = @"You need to supply data!";
-    _lineChartView.dragEnabled = YES;
-    _lineChartView.pinchZoomEnabled = YES;
-    _lineChartView.drawGridBackgroundEnabled = NO;
-    _lineChartView.xAxis.labelPosition = XAxisLabelPositionBottom;
-    _lineChartView.xAxis.drawGridLinesEnabled = NO;
+    if (_pageViewChildren.count == 0) {
+        [self setupDefaults];
+    }
 
-    ChartYAxis *leftAxis = _lineChartView.leftAxis;
-    [leftAxis removeAllLimitLines];
-    leftAxis.customAxisMax = 120.0;
-    leftAxis.customAxisMin = -20.0;
-    leftAxis.startAtZeroEnabled = NO;
-    leftAxis.drawGridLinesEnabled = NO;
+    for (int i = 0; i < _pageViewChildren.count; i++) {
+        [(UIViewController<BXPageViewChildProtocol> *)_pageViewChildren[i]
+            setPageIndex:i];
+    }
 
-    _lineChartView.legend.form = ChartLegendFormLine;
+    _pageViewController = [[UIPageViewController alloc]
+        initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll
+          navigationOrientation:
+              UIPageViewControllerNavigationOrientationHorizontal
+                        options:nil];
 
-    _lineChartView.rightAxis.enabled = NO;
-    [_lineChartView.viewPortHandler setMaximumScaleX:2.f];
-    [_lineChartView.viewPortHandler setMaximumScaleY:2.];
+    NSArray *viewController = [NSArray arrayWithObject:_syncViewController];
 
-    [self setDataCount:20 range:100.0];
+    [_pageViewController.view setFrame:[self.view bounds]];
+    [_pageViewController
+        setViewControllers:viewController
+                 direction:UIPageViewControllerNavigationDirectionForward
+                  animated:NO
+                completion:nil];
 
-    [_lineChartView animateWithXAxisDuration:3.0
-                               yAxisDuration:3.0
-                                easingOption:ChartEasingOptionEaseInOutQuart];
+    [self addChildViewController:_pageViewController];
+    [self.view addSubview:_pageViewController.view];
+    [_pageViewController didMoveToParentViewController:self];
 }
 
 - (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+
     CGSize viewSize = self.view.bounds.size;
-    [_lineChartView setFrame:CGRectMake(20, 20, viewSize.width - 40,
-                                        (viewSize.height * 0.5) - 0)];
-    [_helloCountView
-        setFrame:CGRectMake(0, viewSize.height * 0.5, viewSize.width,
-                            viewSize.height * 0.5)];
+    CGFloat segmentControlHeight = 70.0;
+    CGSize segmentControlInset = CGSizeMake(20, 20);
+
+    [_pageViewController.view
+        setFrame:CGRectMake(0, 0, viewSize.width,
+                            viewSize.height - segmentControlHeight)];
+    [_segmentedControl
+        setFrame:CGRectMake(segmentControlInset.width,
+                            viewSize.height - segmentControlHeight +
+                                segmentControlInset.height,
+                            viewSize.width - (2 * segmentControlInset.width),
+                            segmentControlHeight -
+                                (2 * segmentControlInset.height))];
+}
+
+- (void)setupDefaults {
+    NSArray *pageTitles = [NSArray arrayWithObjects:@"Sync", @"Graph", nil];
+    _segmentedControl = [[UISegmentedControl alloc] initWithItems:pageTitles];
+    [_segmentedControl addTarget:self
+                          action:@selector(switchPages:)
+                forControlEvents:UIControlEventValueChanged];
+    _segmentedControl.selectedSegmentIndex = 0;
+    _segmentedControl.tintColor = [BXStyling darkColor];
+
+    _syncViewController = [[BXSyncViewController alloc] init];
+    _graphViewController = [[BXGraphViewController alloc] init];
+
+    _pageViewChildren = [[NSMutableArray alloc] init];
+    [_pageViewChildren addObject:_syncViewController];
+    [_pageViewChildren addObject:_graphViewController];
+
+    [self.view addSubview:_segmentedControl];
 }
 
 - (void)handleReceivedData:(unsigned char *)data length:(int)length {
@@ -90,62 +115,25 @@
         [[NSString alloc] initWithData:d encoding:NSUTF8StringEncoding];
     NSLog(@"%@", s);
 
-    [self setDataCount:20 range:100.0];
-    [_helloCountView setText:s];
+    [_graphViewController setDataCount:20 range:100.0];
+    [_syncViewController updateData:s];
 }
 
-- (void)setDataCount:(int)count range:(double)range {
-    NSMutableArray *xVals = [[NSMutableArray alloc] init];
-    for (int i = 0; i < count; i += 1) {
-        [xVals addObject:[@(i) stringValue]];
+- (void)switchPages:(UISegmentedControl *)segmentedControl {
+    NSInteger index = segmentedControl.selectedSegmentIndex;
+    UIViewController *vc = _pageViewChildren[index];
+    
+    if ([vc respondsToSelector:@selector(forceAnimation)]) {
+        [(BXGraphViewController *) vc forceAnimation];
     }
-
-    NSMutableArray *yVals = [[NSMutableArray alloc] init];
-    for (int i = 0; i < count; i += 1) {
-        double multiply = range + 1;
-        double val = (double)(arc4random_uniform(multiply)) + 3;
-        [yVals addObject:[[ChartDataEntry alloc] initWithValue:val xIndex:i]];
-    }
-
-    LineChartDataSet *set =
-        [[LineChartDataSet alloc] initWithYVals:yVals label:@"Last Import"];
-
-    set.lineWidth = 2.0;
-    set.circleRadius = 3.0;
-    set.drawCircleHoleEnabled = NO;
-    set.valueFont = [UIFont systemFontOfSize:10.0f];
-    set.fillAlpha = 64 / 255.0;
-    set.fillColor = [BXStyling primaryColor];
-    set.highlightLineDashLengths = @[ @5.f, @2.5f ];
-    set.drawCubicEnabled = YES;
-    [set setColor:[BXStyling primaryColor]];
-    [set setCircleColor:[BXStyling accentColor]];
-    [set setHighlightColor:[BXStyling accentColor]];
-
-    NSMutableArray *dataSets = [[NSMutableArray alloc] init];
-    [dataSets addObject:set];
-
-    LineChartData *data =
-        [[LineChartData alloc] initWithXVals:xVals dataSet:set];
-
-    _lineChartView.data = data;
-    [_lineChartView notifyDataSetChanged];
-    [_lineChartView animateWithXAxisDuration:3.0
-                               yAxisDuration:3.0
-                                easingOption:ChartEasingOptionEaseInOutQuart];
-}
-
-#pragma ChartViewDelegate
-
-- (void)chartValueSelected:(ChartViewBase *__nonnull)chartView
-                     entry:(ChartDataEntry *__nonnull)entry
-              dataSetIndex:(NSInteger)dataSetIndex
-                 highlight:(ChartHighlight *__nonnull)highlight {
-    NSLog(@"chartValueSelected");
-}
-
-- (void)chartValueNothingSelected:(ChartViewBase *__nonnull)chartView {
-    NSLog(@"chartValueNothingSelected");
+    
+    [_pageViewController
+        setViewControllers:
+            [NSArray
+                arrayWithObject:vc]
+                 direction:UIPageViewControllerNavigationDirectionForward
+                  animated:NO
+                completion:nil];
 }
 
 @end

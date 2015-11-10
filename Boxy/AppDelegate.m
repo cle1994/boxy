@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "BXNavigationController.h"
 #import "BXConnectViewController.h"
+#import "BXDashboardViewController.h"
 #import "BXStyling.h"
 
 @interface AppDelegate ()
@@ -23,7 +24,8 @@
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window setTintColor:[BXStyling lightColor]];
     [self.window makeKeyAndVisible];
-    self.window.rootViewController = [[BXNavigationController alloc] initWithRootViewController:[[BXConnectViewController alloc] init]];
+//    self.window.rootViewController = [[BXNavigationController alloc] initWithRootViewController:[[BXConnectViewController alloc] init]];
+    self.window.rootViewController = [[BXNavigationController alloc] initWithRootViewController:[[BXDashboardViewController alloc] init]];
     return YES;
 }
 

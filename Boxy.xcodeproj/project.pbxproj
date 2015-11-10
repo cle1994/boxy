@@ -19,6 +19,8 @@
 		AA68B0C61BEC39BB0095984A /* BXNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA68B0C51BEC39BB0095984A /* BXNavigationController.m */; };
 		AA68B0C91BEC3C110095984A /* BXConnectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA68B0C81BEC3C110095984A /* BXConnectViewController.m */; };
 		AA68B0D01BEC3E640095984A /* BLE.m in Sources */ = {isa = PBXBuildFile; fileRef = AA68B0CE1BEC3E640095984A /* BLE.m */; };
+		AAE702591BF1E9810033ACBC /* BXGraphViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AAE702581BF1E9810033ACBC /* BXGraphViewController.m */; };
+		AAE7025C1BF1E99F0033ACBC /* BXSyncViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AAE7025B1BF1E99F0033ACBC /* BXSyncViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -57,6 +59,11 @@
 		AA68B0CD1BEC3E640095984A /* BLE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BLE.h; path = BLE/BLE.h; sourceTree = SOURCE_ROOT; };
 		AA68B0CE1BEC3E640095984A /* BLE.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BLE.m; path = BLE/BLE.m; sourceTree = SOURCE_ROOT; };
 		AA68B0CF1BEC3E640095984A /* BLEDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BLEDefines.h; path = BLE/BLEDefines.h; sourceTree = SOURCE_ROOT; };
+		AAE702571BF1E9810033ACBC /* BXGraphViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGraphViewController.h; sourceTree = "<group>"; };
+		AAE702581BF1E9810033ACBC /* BXGraphViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGraphViewController.m; sourceTree = "<group>"; };
+		AAE7025A1BF1E99F0033ACBC /* BXSyncViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSyncViewController.h; sourceTree = "<group>"; };
+		AAE7025B1BF1E99F0033ACBC /* BXSyncViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSyncViewController.m; sourceTree = "<group>"; };
+		AAE7025D1BF1EAE10033ACBC /* BXPageViewChildProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXPageViewChildProtocol.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +113,11 @@
 				AA68B0C81BEC3C110095984A /* BXConnectViewController.m */,
 				AA0C156D1BEC866F004A5F50 /* BXDashboardViewController.h */,
 				AA0C156E1BEC866F004A5F50 /* BXDashboardViewController.m */,
+				AAE702571BF1E9810033ACBC /* BXGraphViewController.h */,
+				AAE702581BF1E9810033ACBC /* BXGraphViewController.m */,
+				AAE7025A1BF1E99F0033ACBC /* BXSyncViewController.h */,
+				AAE7025B1BF1E99F0033ACBC /* BXSyncViewController.m */,
+				AAE7025D1BF1EAE10033ACBC /* BXPageViewChildProtocol.h */,
 			);
 			path = Boxy;
 			sourceTree = "<group>";
@@ -230,8 +242,10 @@
 				AA0C156F1BEC866F004A5F50 /* BXDashboardViewController.m in Sources */,
 				AA68B0AF1BEC34E60095984A /* AppDelegate.m in Sources */,
 				AA68B0C61BEC39BB0095984A /* BXNavigationController.m in Sources */,
+				AAE7025C1BF1E99F0033ACBC /* BXSyncViewController.m in Sources */,
 				AA68B0C91BEC3C110095984A /* BXConnectViewController.m in Sources */,
 				AA68B0D01BEC3E640095984A /* BLE.m in Sources */,
+				AAE702591BF1E9810033ACBC /* BXGraphViewController.m in Sources */,
 				AA68B0BF1BEC358E0095984A /* BXStyling.m in Sources */,
 				AA68B0AC1BEC34E60095984A /* main.m in Sources */,
 			);
