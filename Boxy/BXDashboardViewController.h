@@ -9,8 +9,9 @@
 @import UIKit;
 
 #import "BLE.h"
+#import "BXDashboardBLEDelegate.h"
 
-@interface BXDashboardViewController : UIViewController
+@interface BXDashboardViewController : UIViewController <BXDashboardBLEDelegate>
 
 @property (strong, nonatomic) BLE *ble;
 

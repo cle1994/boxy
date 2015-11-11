@@ -63,6 +63,8 @@
     _pageViewSegmentedSwitcher.tintColor = [BXStyling darkColor];
 
     _syncViewController = [[BXSyncViewController alloc] init];
+    _syncViewController.delegate = self;
+
     _graphViewController = [[BXGraphViewController alloc] init];
 
     _pageViewChildren = [[NSMutableArray alloc] init];
@@ -104,6 +106,13 @@
 
     [_graphViewController setDataCount:20 range:100.0];
     [_syncViewController updateData:s];
+}
+
+- (void)sendPeripheralRequest:(NSString *)request {
+    if (request.length > 16) {
+        request = [request substringToIndex:16];
+    }
+    [_ble write:[request dataUsingEncoding:NSUTF8StringEncoding]];
 }
 
 #pragma mark - Handle Page Switching

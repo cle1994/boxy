@@ -64,6 +64,7 @@
 		AAE7025A1BF1E99F0033ACBC /* BXSyncViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSyncViewController.h; sourceTree = "<group>"; };
 		AAE7025B1BF1E99F0033ACBC /* BXSyncViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSyncViewController.m; sourceTree = "<group>"; };
 		AAE7025D1BF1EAE10033ACBC /* BXPageViewChildProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXPageViewChildProtocol.h; sourceTree = "<group>"; };
+		AAF9AE9F1BF2D93900C22FFF /* BXDashboardBLEDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDashboardBLEDelegate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +119,7 @@
 				AAE7025A1BF1E99F0033ACBC /* BXSyncViewController.h */,
 				AAE7025B1BF1E99F0033ACBC /* BXSyncViewController.m */,
 				AAE7025D1BF1EAE10033ACBC /* BXPageViewChildProtocol.h */,
+				AAF9AE9F1BF2D93900C22FFF /* BXDashboardBLEDelegate.h */,
 			);
 			path = Boxy;
 			sourceTree = "<group>";

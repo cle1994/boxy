@@ -53,4 +53,13 @@
     [_helloCountView setText:data];
 }
 
+#pragma mark - Synthesize BXDashboardBLEDelegate
+- (id)delegate {
+    return self.delegate;
+}
+
+- (void)setDelegate:(id<BXDashboardBLEDelegate>)delegate {
+    self.delegate = delegate;
+}
+
 @end
