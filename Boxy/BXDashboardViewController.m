@@ -49,21 +49,7 @@
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
-
-    CGSize viewSize = self.view.bounds.size;
-    CGFloat segmentControlHeight = 70.0;
-    CGSize segmentControlInset = CGSizeMake(20, 20);
-
-    [_pageViewController.view
-        setFrame:CGRectMake(0, 0, viewSize.width,
-                            viewSize.height - segmentControlHeight)];
-    [_pageViewSegmentedSwitcher
-        setFrame:CGRectMake(segmentControlInset.width,
-                            viewSize.height - segmentControlHeight +
-                                segmentControlInset.height,
-                            viewSize.width - (2 * segmentControlInset.width),
-                            segmentControlHeight -
-                                (2 * segmentControlInset.height))];
+    [self _installConstraints];
 }
 
 - (void)setupPageView {
@@ -136,10 +122,51 @@
 #pragma mark - Constraints
 
 - (void)_installConstraints {
-    NSDictionary *views = NSDictionaryOfVariableBindings(
-        _graphViewController.view, _pageViewSegmentedSwitcher);
-    _graphViewController.view.translatesAutoresizingMaskIntoConstraints = NO;
-    _pageViewSegmentedSwitcher.translatesAutoresizingMaskIntoConstraints = NO;
+    self.view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
+
+    [_pageViewController.view setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [_pageViewSegmentedSwitcher
+        setTranslatesAutoresizingMaskIntoConstraints:NO];
+
+    UIView *pageView = _pageViewController.view;
+    NSDictionary *views =
+        NSDictionaryOfVariableBindings(pageView, _pageViewSegmentedSwitcher);
+
+    NSDictionary *metrics = @{ @"margin" : @(20) };
+
+    [self.view
+        addConstraints:
+            [NSLayoutConstraint
+                constraintsWithVisualFormat:
+                    @"V:|-[pageView]-[_pageViewSegmentedSwitcher]-margin-|"
+                                    options:0
+                                    metrics:metrics
+                                      views:views]];
+
+    [self.view
+        addConstraints:[NSLayoutConstraint
+                           constraintsWithVisualFormat:@"H:|-[pageView]-|"
+                                               options:0
+                                               metrics:metrics
+                                                 views:views]];
+
+    [self.view addConstraints:
+                   [NSLayoutConstraint
+                       constraintsWithVisualFormat:
+                           @"H:|-margin-[_pageViewSegmentedSwitcher]-margin-|"
+                                           options:0
+                                           metrics:metrics
+                                             views:views]];
+
+    [self.view
+        addConstraint:[NSLayoutConstraint
+                          constraintWithItem:_pageViewSegmentedSwitcher
+                                   attribute:NSLayoutAttributeHeight
+                                   relatedBy:NSLayoutRelationEqual
+                                      toItem:nil
+                                   attribute:NSLayoutAttributeNotAnAttribute
+                                  multiplier:0
+                                    constant:35.0]];
 }
 
 @end

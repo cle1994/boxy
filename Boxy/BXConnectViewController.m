@@ -58,34 +58,21 @@ static NSString *BXAvailablePeripheralCellIdentifier =
         _availableDevicesTableView.delegate = self;
         _availableDevicesTableView.dataSource = self;
 
-        CGFloat headerHeight = 60;
-        CGFloat headerInset = 25;
-        CGSize buttonSize = CGSizeMake(51, 31);
-        CGSize viewSize = self.view.bounds.size;
-
-        [_useLastConnectedSwitch
-            setFrame:CGRectMake(viewSize.width - headerInset - buttonSize.width,
-                                (headerHeight - buttonSize.height) / 2,
-                                buttonSize.width, buttonSize.height)];
         [_useLastConnectedSwitch setTintColor:[BXStyling secondaryColor]];
         [_useLastConnectedSwitch setOnTintColor:[BXStyling primaryColor]];
         [_useLastConnectedSwitch addTarget:self
                                     action:@selector(toggleUseLastConnection:)
                           forControlEvents:UIControlEventValueChanged];
 
-        [_useLastConnectedLabel
-            setFrame:CGRectMake(headerInset, 0,
-                                viewSize.width - (headerInset * 2) -
-                                    buttonSize.width,
-                                headerHeight)];
         _useLastConnectedLabel.text = @"Use Last Connected Device";
         _useLastConnectedLabel.textColor = [BXStyling darkColor];
 
         [_headerView addSubview:_useLastConnectedLabel];
         [_headerView addSubview:_useLastConnectedSwitch];
         [_headerView setBackgroundColor:[BXStyling lightColor]];
-        [_headerView setFrame:CGRectMake(0, 0, self.view.bounds.size.width,
-                                         headerHeight)];
+        [_headerView
+            setFrame:CGRectMake(0, 0, self.view.bounds.size.width, 60)];
+
         _availableDevicesTableView.tableHeaderView = _headerView;
 
         [self.view addSubview:_availableDevicesTableView];
@@ -113,6 +100,8 @@ static NSString *BXAvailablePeripheralCellIdentifier =
 }
 
 - (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    [self _installConstraints];
     CGSize viewSize = self.view.bounds.size;
     [_availableDevicesTableView
         setFrame:CGRectMake(0, 0, viewSize.width, viewSize.height)];
@@ -247,6 +236,54 @@ static NSString *BXAvailablePeripheralCellIdentifier =
 
 - (NSString *)getUUIDStringForPeripheral:(CBPeripheral *)peripheral {
     return peripheral.identifier.UUIDString;
+}
+
+#pragma mark - Constraints
+
+- (void)_installConstraints {
+    _headerView.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
+
+    _useLastConnectedLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    _useLastConnectedSwitch.translatesAutoresizingMaskIntoConstraints = NO;
+
+    NSDictionary *views = NSDictionaryOfVariableBindings(
+        _useLastConnectedLabel, _useLastConnectedSwitch);
+
+    NSDictionary *metrics = @{ @"margin" : @(30) };
+
+    [_headerView addConstraints:[NSLayoutConstraint
+                                    constraintsWithVisualFormat:
+                                        @"H:|-margin-[_useLastConnectedLabel]-"
+                                    @"margin-[_useLastConnectedSwitch]-margin-|"
+                                                        options:0
+                                                        metrics:metrics
+                                                          views:views]];
+
+    [_headerView
+        addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
+                                               @"V:|-[_useLastConnectedLabel]-|"
+                                                               options:0
+                                                               metrics:metrics
+                                                                 views:views]];
+
+    [_headerView addConstraint:[NSLayoutConstraint
+                                   constraintWithItem:_useLastConnectedSwitch
+                                            attribute:NSLayoutAttributeCenterY
+                                            relatedBy:NSLayoutRelationEqual
+                                               toItem:_headerView
+                                            attribute:NSLayoutAttributeCenterY
+                                           multiplier:1
+                                             constant:0]];
+
+    [_headerView
+        addConstraint:[NSLayoutConstraint
+                          constraintWithItem:_useLastConnectedSwitch
+                                   attribute:NSLayoutAttributeWidth
+                                   relatedBy:NSLayoutRelationEqual
+                                      toItem:nil
+                                   attribute:NSLayoutAttributeNotAnAttribute
+                                  multiplier:1
+                                    constant:51]];
 }
 
 @end
