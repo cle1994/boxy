@@ -14,6 +14,7 @@
 + (UIColor *)colorFromHexString:(NSString *)hexString;
 
 + (UIColor *)darkColor;
++ (UIColor *)mediumColor;
 + (UIColor *)lightColor;
 
 + (UIColor *)primaryColor;

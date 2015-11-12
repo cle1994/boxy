@@ -32,8 +32,6 @@
         self.navigationController.navigationBar.barTintColor =
             [BXStyling lightColor];
         self.view.backgroundColor = [BXStyling lightColor];
-
-        [self setupPageView];
     }
 
     return self;
@@ -41,10 +39,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    if (_pageViewChildren.count == 0) {
-        [self setupPageView];
-    }
+    [self setupPageView];
 }
 
 - (void)viewDidLayoutSubviews {

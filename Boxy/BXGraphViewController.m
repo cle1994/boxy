@@ -69,10 +69,7 @@
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
-
-    CGSize viewSize = self.view.bounds.size;
-    [_lineChartView
-        setFrame:CGRectMake(20, 20, viewSize.width - 40, viewSize.height - 40)];
+    [self _installConstraint];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -139,6 +136,28 @@
 
 - (void)chartValueNothingSelected:(ChartViewBase *__nonnull)chartView {
     NSLog(@"chartValueNothingSelected");
+}
+
+#pragma mark - Constraints
+
+- (void)_installConstraint {
+    self.view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
+    
+    _lineChartView.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    NSDictionary *views = NSDictionaryOfVariableBindings(_lineChartView);
+    
+    NSDictionary *metrics = @{ @"margin" : @(20) };
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-margin-[_lineChartView]-margin-|"
+                                                            options:0
+                                                            metrics:metrics
+                                                              views:views]];
+    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-margin-[_lineChartView]-margin-|"
+                               options:0
+                               metrics:metrics
+                               views:views]];
 }
 
 @end

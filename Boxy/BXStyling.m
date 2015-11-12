@@ -27,6 +27,10 @@
     return [self colorFromHexString:@"#556270"];
 }
 
++ (UIColor *)mediumColor {
+    return [self colorFromHexString:@"#AAAAAA"];
+}
+
 + (UIColor *)lightColor {
     return [self colorFromHexString:@"#F3F3F3"];
 }

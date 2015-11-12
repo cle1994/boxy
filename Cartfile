@@ -1,2 +1,3 @@
 github "AFNetworking/AFNetworking" ~> 3.0
 github "danielgindi/ios-charts" ~> 2.1.6
+github "Flipboard/FLAnimatedImage"

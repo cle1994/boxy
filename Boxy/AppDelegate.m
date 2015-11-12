@@ -25,10 +25,11 @@
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window setTintColor:[BXStyling lightColor]];
     [self.window makeKeyAndVisible];
-    self.window.rootViewController = [[BXNavigationController alloc]
-        initWithRootViewController:[[BXConnectViewController alloc] init]];
     //    self.window.rootViewController = [[BXNavigationController alloc]
-    //    initWithRootViewController:[[BXDashboardViewController alloc] init]];
+    //        initWithRootViewController:[[BXConnectViewController alloc]
+    //        init]];
+    self.window.rootViewController = [[BXNavigationController alloc]
+        initWithRootViewController:[[BXDashboardViewController alloc] init]];
     return YES;
 }
 
