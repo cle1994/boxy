@@ -11,9 +11,11 @@
 #import "BXSyncViewController.h"
 #import "BXStyling.h"
 #import "BXPageViewChildProtocol.h"
+#import "BXSyncingPopupViewController.h"
 
 @interface BXDashboardViewController ()
 
+@property (strong, nonatomic) BXSyncingPopupViewController *popupViewController;
 @property (strong, nonatomic) UIPageViewController *pageViewController;
 @property (strong, nonatomic) BXSyncViewController *syncViewController;
 @property (strong, nonatomic) BXGraphViewController *graphViewController;
@@ -32,6 +34,14 @@
         self.navigationController.navigationBar.barTintColor =
             [BXStyling lightColor];
         self.view.backgroundColor = [BXStyling lightColor];
+        
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Sync"
+                                         style:UIBarButtonItemStylePlain
+                                        target:self
+                                        action:@selector(syncPeripheral)];
+        [self.navigationItem.rightBarButtonItem setTintColor:[BXStyling lightColor]];
+        
+        _popupViewController = [[BXSyncingPopupViewController alloc] init];
     }
 
     return self;
@@ -45,6 +55,9 @@
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     [self _installConstraints];
+    
+    CGSize viewSize = self.view.bounds.size;
+    [_popupViewController.view setFrame:CGRectMake(0, 0, viewSize.width, viewSize.height)];
 }
 
 - (void)setupPageView {
@@ -91,6 +104,18 @@
     [_pageViewController didMoveToParentViewController:self];
 }
 
+#pragma mark - Selector
+
+- (void)syncPeripheral {
+    [self sendPeripheralRequest:@"d"];
+    [self addChildViewController:_popupViewController];
+    [self.view addSubview:_popupViewController.view];
+    
+    [_popupViewController didMoveToParentViewController:self];
+    
+    [_popupViewController shouldAnimate:YES];
+}
+
 #pragma mark - Handle Bluetooth Data
 
 - (void)handleReceivedData:(unsigned char *)data length:(int)length {
@@ -101,6 +126,7 @@
 
     [_graphViewController setDataCount:20 range:100.0];
     [_syncViewController updateData:s];
+    [_popupViewController closePopup];
 }
 
 - (void)sendPeripheralRequest:(NSString *)request {

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA08BB7A1BF56FB700842346 /* BXSyncingPopupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA08BB791BF56FB700842346 /* BXSyncingPopupViewController.m */; };
 		AA0C156F1BEC866F004A5F50 /* BXDashboardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA0C156E1BEC866F004A5F50 /* BXDashboardViewController.m */; };
 		AA5E72001BF0887600ABDDA3 /* Charts.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = AA5E71FC1BF07E2200ABDDA3 /* Charts.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		AA68B0AC1BEC34E60095984A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AA68B0AB1BEC34E60095984A /* main.m */; };
@@ -45,6 +46,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		AA08BB781BF56FB700842346 /* BXSyncingPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSyncingPopupViewController.h; sourceTree = "<group>"; };
+		AA08BB791BF56FB700842346 /* BXSyncingPopupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSyncingPopupViewController.m; sourceTree = "<group>"; };
 		AA0C156D1BEC866F004A5F50 /* BXDashboardViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDashboardViewController.h; sourceTree = "<group>"; };
 		AA0C156E1BEC866F004A5F50 /* BXDashboardViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDashboardViewController.m; sourceTree = "<group>"; };
 		AA5E71FC1BF07E2200ABDDA3 /* Charts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Charts.framework; path = ../Carthage/Build/iOS/Charts.framework; sourceTree = "<group>"; };
@@ -141,6 +144,8 @@
 				AAE7025B1BF1E99F0033ACBC /* BXSyncViewController.m */,
 				AAE7025D1BF1EAE10033ACBC /* BXPageViewChildProtocol.h */,
 				AAF9AE9F1BF2D93900C22FFF /* BXDashboardBLEDelegate.h */,
+				AA08BB781BF56FB700842346 /* BXSyncingPopupViewController.h */,
+				AA08BB791BF56FB700842346 /* BXSyncingPopupViewController.m */,
 			);
 			path = Boxy;
 			sourceTree = "<group>";
@@ -288,6 +293,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA0C156F1BEC866F004A5F50 /* BXDashboardViewController.m in Sources */,
+				AA08BB7A1BF56FB700842346 /* BXSyncingPopupViewController.m in Sources */,
 				AA68B0AF1BEC34E60095984A /* AppDelegate.m in Sources */,
 				AAF9AEAF1BF3312200C22FFF /* FLAnimatedImage.m in Sources */,
 				AA68B0C61BEC39BB0095984A /* BXNavigationController.m in Sources */,

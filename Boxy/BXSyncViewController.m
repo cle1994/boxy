@@ -85,7 +85,7 @@
 - (void)syncPeripheralData {
     [_syncButton setEnabled:NO];
     [_syncIcon startAnimating];
-    [self.delegate sendPeripheralRequest:@"data"];
+    [self.delegate sendPeripheralRequest:@"d"];
 }
 
 #pragma mark - Constraints
