@@ -7,15 +7,25 @@
 //
 
 #import "BXDashboardViewController.h"
+#import "BXNavigationController.h"
+#import "BXPageViewChildProtocol.h"
 #import "BXGraphViewController.h"
 #import "BXSyncViewController.h"
-#import "BXStyling.h"
-#import "BXPageViewChildProtocol.h"
 #import "BXSyncingPopupViewController.h"
+#import "BXStyling.h"
+#import "BLE.h"
 
-@interface BXDashboardViewController ()
+@interface BXDashboardViewController ()<BLEDelegate>
 
+// BLE
+@property (strong, nonatomic) BLE *ble;
+@property (strong, nonatomic) BXConnectViewController *connectViewController;
+@property (strong, nonatomic) NSMutableArray *devices;
+@property (strong, nonatomic) NSString *lastUUID;
+@property (nonatomic) BOOL isFindingLast;
 @property (strong, nonatomic) BXSyncingPopupViewController *popupViewController;
+
+// Segmented Pages
 @property (strong, nonatomic) UIPageViewController *pageViewController;
 @property (strong, nonatomic) BXSyncViewController *syncViewController;
 @property (strong, nonatomic) BXGraphViewController *graphViewController;
@@ -23,6 +33,8 @@
 @property (strong, nonatomic) NSMutableArray *pageViewChildren;
 
 @end
+
+NSString *const UUIDPrefKey = @"UUIDPrefKey";
 
 @implementation BXDashboardViewController
 
@@ -34,14 +46,6 @@
         self.navigationController.navigationBar.barTintColor =
             [BXStyling lightColor];
         self.view.backgroundColor = [BXStyling lightColor];
-        
-        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Sync"
-                                         style:UIBarButtonItemStylePlain
-                                        target:self
-                                        action:@selector(syncPeripheral)];
-        [self.navigationItem.rightBarButtonItem setTintColor:[BXStyling lightColor]];
-        
-        _popupViewController = [[BXSyncingPopupViewController alloc] init];
     }
 
     return self;
@@ -49,15 +53,28 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    if (_ble == nil) {
+        _ble = [[BLE alloc] init];
+        _ble.delegate = self;
+        [_ble controlSetup];
+    }
+
+    _lastUUID =
+        [[NSUserDefaults standardUserDefaults] objectForKey:UUIDPrefKey];
+
+    [self scanForDevicesAndConnectLast:YES];
+
     [self setupPageView];
 }
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     [self _installConstraints];
-    
+
     CGSize viewSize = self.view.bounds.size;
-    [_popupViewController.view setFrame:CGRectMake(0, 0, viewSize.width, viewSize.height)];
+    [_popupViewController.view
+        setFrame:CGRectMake(0, 0, viewSize.width, viewSize.height)];
 }
 
 - (void)setupPageView {
@@ -71,7 +88,6 @@
     _pageViewSegmentedSwitcher.tintColor = [BXStyling darkColor];
 
     _syncViewController = [[BXSyncViewController alloc] init];
-    _syncViewController.delegate = self;
 
     _graphViewController = [[BXGraphViewController alloc] init];
 
@@ -106,19 +122,58 @@
 
 #pragma mark - Selector
 
+- (void)connectPeripheral {
+    _connectViewController = [[BXConnectViewController alloc] init];
+    _connectViewController.delegate = self;
+
+    BXNavigationController *connectNavigationController =
+        [[BXNavigationController alloc]
+            initWithRootViewController:_connectViewController];
+
+    [connectNavigationController setBarWithColor:[BXStyling primaryColor]];
+    [connectNavigationController setBarStyleWithStyle:UIBarStyleDefault];
+    [connectNavigationController setTitleAttributesWithAttributes:@{
+        NSForegroundColorAttributeName : [BXStyling blackColor]
+    }];
+
+    [self.navigationController
+        presentViewController:connectNavigationController
+                     animated:YES
+                   completion:^(void) {
+                     [self scanForDevicesAndConnectLast:NO];
+                   }];
+}
+
 - (void)syncPeripheral {
     [self sendPeripheralRequest:@"d"];
     [self addChildViewController:_popupViewController];
     [self.view addSubview:_popupViewController.view];
-    
+
     [_popupViewController didMoveToParentViewController:self];
-    
+
     [_popupViewController shouldAnimate:YES];
 }
 
-#pragma mark - Handle Bluetooth Data
+#pragma mark - BLE Delegate
 
-- (void)handleReceivedData:(unsigned char *)data length:(int)length {
+- (void)bleDidConnect {
+    _lastUUID = [self getUUIDStringForPeripheral:_ble.activePeripheral];
+    [[NSUserDefaults standardUserDefaults] setObject:_lastUUID
+                                              forKey:UUIDPrefKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+
+    [self updateNavigationWithPeripheralStatus:NO];
+
+    if ([self presentedViewController] != nil) {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
+}
+
+- (void)bleDidDisconnect {
+    [self updateNavigationWithPeripheralStatus:NO];
+}
+
+- (void)bleDidReceiveData:(unsigned char *)data length:(int)length {
     NSData *d = [NSData dataWithBytes:data length:length];
     NSString *s =
         [[NSString alloc] initWithData:d encoding:NSUTF8StringEncoding];
@@ -126,14 +181,116 @@
 
     [_graphViewController setDataCount:20 range:100.0];
     [_syncViewController updateData:s];
-    [_popupViewController closePopup];
 }
 
+- (void)bleDidUpdateRSSI:(NSNumber *)rssi {
+}
+
+- (NSString *)getUUIDStringForPeripheral:(CBPeripheral *)peripheral {
+    return peripheral.identifier.UUIDString;
+}
+
+#pragma mark - Device Scanning
+
+- (void)scanForDevicesAndConnectLast:(BOOL)last {
+    NSLog(@"Scanning for devices...");
+
+    _isFindingLast = last;
+
+    if (_ble.activePeripheral) {
+        if (_ble.activePeripheral.state == CBPeripheralStateConnected) {
+            [[_ble CM] cancelPeripheralConnection:[_ble activePeripheral]];
+            return;
+        }
+    }
+
+    if (_ble.peripherals) {
+        _ble.peripherals = nil;
+    }
+
+    [_ble findBLEPeripherals:3];
+
+    [NSTimer scheduledTimerWithTimeInterval:(float)3.0
+                                     target:self
+                                   selector:@selector(connectionTimer:)
+                                   userInfo:nil
+                                    repeats:NO];
+}
+
+- (void)connectionTimer:(NSTimer *)timer {
+    NSLog(@"Checking if devices found...");
+
+    if (_ble.peripherals.count > 0) {
+        [_devices removeAllObjects];
+
+        if (_isFindingLast) {
+            for (int i = 0; i < _ble.peripherals.count; i++) {
+                CBPeripheral *peripheral = [_ble.peripherals objectAtIndex:i];
+                NSString *peripheralUUID =
+                    [self getUUIDStringForPeripheral:peripheral];
+                if (peripheralUUID ||
+                    ![peripheralUUID isKindOfClass:[NSNull class]]) {
+                    if ([_lastUUID isEqualToString:peripheralUUID]) {
+                        [_ble connectPeripheral:peripheral];
+                    }
+                }
+            }
+        } else {
+            for (int i = 0; i < _ble.peripherals.count; i++) {
+                CBPeripheral *peripheral = [_ble.peripherals objectAtIndex:i];
+                NSString *peripheralUUID =
+                    [self getUUIDStringForPeripheral:peripheral];
+                if (peripheralUUID ||
+                    ![peripheralUUID isKindOfClass:[NSNull class]]) {
+                    [_devices addObject:peripheral];
+                }
+            }
+        }
+    }
+
+    if ([self presentedViewController] != nil) {
+        NSLog(@"Sending devices to modal...");
+        [_connectViewController setDevices:_devices];
+    }
+
+    [self updateNavigationWithPeripheralStatus:_ble.isConnected];
+}
+
+- (void)connectToDeviceAtIndex:(NSInteger)index {
+    if (_ble.isConnected) {
+        [[_ble CM] cancelPeripheralConnection:[_ble activePeripheral]];
+    }
+
+    [_ble connectPeripheral:_devices[index]];
+}
+
+#pragma mark - Handle Bluetooth Data
 - (void)sendPeripheralRequest:(NSString *)request {
     if (request.length > 16) {
         request = [request substringToIndex:16];
     }
     [_ble write:[request dataUsingEncoding:NSUTF8StringEncoding]];
+}
+
+#pragma mark - Handle Navigation Updates
+
+- (void)updateNavigationWithPeripheralStatus:(BOOL)status {
+    if (status) {
+        self.navigationItem.rightBarButtonItem =
+            [[UIBarButtonItem alloc] initWithTitle:@"Sync"
+                                             style:UIBarButtonItemStylePlain
+                                            target:self
+                                            action:@selector(syncPeripheral)];
+    } else {
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
+            initWithTitle:@"Connect"
+                    style:UIBarButtonItemStylePlain
+                   target:self
+                   action:@selector(connectPeripheral)];
+    }
+
+    [self.navigationItem.rightBarButtonItem
+        setTintColor:[BXStyling lightColor]];
 }
 
 #pragma mark - Handle Page Switching

@@ -13,6 +13,7 @@
 
 + (UIColor *)colorFromHexString:(NSString *)hexString;
 
++ (UIColor *)blackColor;
 + (UIColor *)darkColor;
 + (UIColor *)mediumColor;
 + (UIColor *)lightColor;

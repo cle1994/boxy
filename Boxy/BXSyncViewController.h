@@ -13,7 +13,6 @@
 
 @interface BXSyncViewController : UIViewController<BXPageViewChildProtocol>
 
-@property (assign) id<BXDashboardBLEDelegate> delegate;
 @property (nonatomic) int pageIndex;
 
 - (void)updateData:(NSString *)data;

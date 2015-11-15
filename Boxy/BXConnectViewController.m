@@ -7,37 +7,40 @@
 //
 
 #import "BXConnectViewController.h"
-#import "BXDashboardViewController.h"
+#import "BXSyncingPopupViewController.h"
 #import "BXStyling.h"
 #import "BLE.h"
 
-@interface BXConnectViewController ()<BLEDelegate, UITableViewDataSource,
-                                      UITableViewDelegate,
-                                      UINavigationControllerDelegate>
+@interface BXConnectViewController ()<
+    UITableViewDataSource, UITableViewDelegate, UINavigationControllerDelegate>
 
-@property (strong, nonatomic) BLE *ble;
-@property (strong, nonatomic)
-    BXDashboardViewController *dashboardViewController;
+@property (strong, nonatomic) BXSyncingPopupViewController *popupViewController;
 @property (strong, nonatomic) UITableView *availableDevicesTableView;
 @property (strong, nonatomic) UIView *headerView;
 @property (strong, nonatomic) UISwitch *useLastConnectedSwitch;
 @property (strong, nonatomic) UILabel *useLastConnectedLabel;
-@property (strong, nonatomic) NSMutableArray *devices;
-@property (strong, nonatomic) NSString *lastUUID;
 @property (nonatomic) BOOL isFindingLast;
 
 @end
 
-NSString *const UUIDPrefKey = @"UUIDPrefKey";
 static NSString *BXAvailablePeripheralCellIdentifier =
     @"BXAvailablePeripheralCellIdentifier";
 
 @implementation BXConnectViewController
+@synthesize devices = _devices;
 
 - (instancetype)init {
     if (self = [super init]) {
-        self.title = @"Available Connections";
+        self.title = @"Available Peripherals";
         self.view.backgroundColor = [BXStyling lightColor];
+
+        self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]
+            initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
+                                 target:self
+                                 action:@selector(dismissModal)];
+
+        [self.navigationItem.leftBarButtonItem
+            setTintColor:[BXStyling blackColor]];
 
         self.navigationItem.rightBarButtonItem =
             [[UIBarButtonItem alloc] initWithTitle:@"Scan"
@@ -46,14 +49,12 @@ static NSString *BXAvailablePeripheralCellIdentifier =
                                             action:@selector(scanForDevices)];
 
         [self.navigationItem.rightBarButtonItem
-            setTintColor:[BXStyling lightColor]];
+            setTintColor:[BXStyling blackColor]];
 
         _availableDevicesTableView = [[UITableView alloc] init];
         _headerView = [[UIView alloc] init];
         _useLastConnectedLabel = [[UILabel alloc] init];
         _useLastConnectedSwitch = [[UISwitch alloc] init];
-        _devices = [NSMutableArray new];
-        _isFindingLast = NO;
 
         _availableDevicesTableView.delegate = self;
         _availableDevicesTableView.dataSource = self;
@@ -63,9 +64,12 @@ static NSString *BXAvailablePeripheralCellIdentifier =
         [_useLastConnectedSwitch addTarget:self
                                     action:@selector(toggleUseLastConnection:)
                           forControlEvents:UIControlEventValueChanged];
+        [_useLastConnectedSwitch setOn:NO];
 
-        _useLastConnectedLabel.text = @"Use Last Connected Device";
+        _useLastConnectedLabel.text = @"Use Last Connected Peripheral";
         _useLastConnectedLabel.textColor = [BXStyling darkColor];
+
+        _isFindingLast = NO;
 
         [_headerView addSubview:_useLastConnectedLabel];
         [_headerView addSubview:_useLastConnectedSwitch];
@@ -83,82 +87,48 @@ static NSString *BXAvailablePeripheralCellIdentifier =
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    if (_ble == nil) {
-        _ble = [[BLE alloc] init];
-        [_ble controlSetup];
-        _ble.delegate = self;
-    }
-
-    _lastUUID =
-        [[NSUserDefaults standardUserDefaults] objectForKey:UUIDPrefKey];
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    [self scanForDevices];
 }
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     [self _installConstraints];
     CGSize viewSize = self.view.bounds.size;
+
     [_availableDevicesTableView
         setFrame:CGRectMake(0, 0, viewSize.width, viewSize.height)];
+
+    [_popupViewController.view
+        setFrame:CGRectMake(0, 0, viewSize.width, viewSize.height)];
+}
+
+- (void)stopSyncingAnimation {
+    if (_popupViewController) {
+        [_popupViewController closePopup];
+    }
+}
+
+#pragma mark - Setters/Getters
+
+- (void)setDevices:(NSMutableArray *)devices {
+    if (devices != nil) {
+        NSLog(@"Modal received devices");
+        self.devices = devices;
+        [_availableDevicesTableView reloadData];
+    } else {
+        NSLog(@"Modal received nil devices");
+    }
+}
+
+#pragma mark - Selectors
+
+- (void)dismissModal {
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - Device Scanning
 
 - (void)scanForDevices {
-    if (_ble.activePeripheral) {
-        if (_ble.activePeripheral.state == CBPeripheralStateConnected) {
-            [[_ble CM] cancelPeripheralConnection:[_ble activePeripheral]];
-            return;
-        }
-    }
-
-    if (_ble.peripherals) {
-        _ble.peripherals = nil;
-    }
-
-    [_ble findBLEPeripherals:3];
-
-    [NSTimer scheduledTimerWithTimeInterval:(float)3.0
-                                     target:self
-                                   selector:@selector(connectionTimer:)
-                                   userInfo:nil
-                                    repeats:NO];
-}
-
-- (void)connectionTimer:(NSTimer *)timer {
-    if (_ble.peripherals.count > 0) {
-        if (_isFindingLast) {
-            for (int i = 0; i < _ble.peripherals.count; i++) {
-                CBPeripheral *peripheral = [_ble.peripherals objectAtIndex:i];
-                NSString *peripheralUUID =
-                    [self getUUIDStringForPeripheral:peripheral];
-                if (peripheralUUID ||
-                    ![peripheralUUID isKindOfClass:[NSNull class]]) {
-                    if ([_lastUUID isEqualToString:peripheralUUID]) {
-                        [_ble connectPeripheral:peripheral];
-                    }
-                }
-            }
-        } else {
-            [_devices removeAllObjects];
-
-            for (int i = 0; i < _ble.peripherals.count; i++) {
-                CBPeripheral *peripheral = [_ble.peripherals objectAtIndex:i];
-                NSString *peripheralUUID =
-                    [self getUUIDStringForPeripheral:peripheral];
-                if (peripheralUUID ||
-                    ![peripheralUUID isKindOfClass:[NSNull class]]) {
-                    [_devices addObject:peripheral];
-                }
-            }
-        }
-    }
-    [_availableDevicesTableView reloadData];
+    [self.delegate scanForDevicesAndConnectLast:_isFindingLast];
 }
 
 - (void)toggleUseLastConnection:(UISwitch *)paramSender {
@@ -175,7 +145,7 @@ static NSString *BXAvailablePeripheralCellIdentifier =
 
 - (NSInteger)tableView:(UITableView *)tableView
  numberOfRowsInSection:(NSInteger)section {
-    return _devices.count;
+    return self.devices.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView
@@ -191,7 +161,7 @@ static NSString *BXAvailablePeripheralCellIdentifier =
             reuseIdentifier:BXAvailablePeripheralCellIdentifier];
     }
 
-    peripheral = _devices[indexPath.row];
+    peripheral = self.devices[indexPath.row];
 
     [cell.textLabel setText:peripheral.name];
     return cell;
@@ -199,43 +169,14 @@ static NSString *BXAvailablePeripheralCellIdentifier =
 
 - (void)tableView:(UITableView *)tableView
     didSelectRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
-    if (_ble.isConnected) {
-        [[_ble CM] cancelPeripheralConnection:[_ble activePeripheral]];
-    }
-    [_ble connectPeripheral:_devices[indexPath.row]];
-}
+    [self.delegate connectToDeviceAtIndex:indexPath.row];
 
-#pragma mark - BLE Delegate
+    _popupViewController = [[BXSyncingPopupViewController alloc] init];
+    [self addChildViewController:_popupViewController];
+    [self.view addSubview:_popupViewController.view];
 
-- (void)bleDidConnect {
-    _lastUUID = [self getUUIDStringForPeripheral:_ble.activePeripheral];
-    [[NSUserDefaults standardUserDefaults] setObject:_lastUUID
-                                              forKey:UUIDPrefKey];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-
-    _dashboardViewController = [[BXDashboardViewController alloc] init];
-    _dashboardViewController.ble = self.ble;
-
-    [self.navigationController pushViewController:_dashboardViewController
-                                         animated:YES];
-}
-
-- (void)bleDidDisconnect {
-    [self.navigationController popToRootViewControllerAnimated:true];
-}
-
-- (void)bleDidReceiveData:(unsigned char *)data length:(int)length {
-    if (_dashboardViewController ||
-        ![_dashboardViewController isKindOfClass:[NSNull class]]) {
-        [_dashboardViewController handleReceivedData:data length:length];
-    }
-}
-
-- (void)bleDidUpdateRSSI:(NSNumber *)rssi {
-}
-
-- (NSString *)getUUIDStringForPeripheral:(CBPeripheral *)peripheral {
-    return peripheral.identifier.UUIDString;
+    [_popupViewController didMoveToParentViewController:self];
+    [_popupViewController shouldAnimate:YES];
 }
 
 #pragma mark - Constraints

@@ -21,4 +21,16 @@
     self.navigationBar.barStyle = UIBarStyleBlack;
 }
 
+- (void)setBarWithColor:(UIColor *)color {
+    self.navigationBar.barTintColor = color;
+}
+
+- (void)setTitleAttributesWithAttributes:(NSDictionary *)attributes {
+    self.navigationBar.titleTextAttributes = attributes;
+}
+
+- (void)setBarStyleWithStyle:(UIBarStyle)style {
+    self.navigationBar.barStyle = style;
+}
+
 @end

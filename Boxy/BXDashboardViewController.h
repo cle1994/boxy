@@ -8,13 +8,9 @@
 
 @import UIKit;
 
-#import "BLE.h"
 #import "BXDashboardBLEDelegate.h"
+#import "BXConnectViewController.h"
 
-@interface BXDashboardViewController : UIViewController <BXDashboardBLEDelegate>
-
-@property (strong, nonatomic) BLE *ble;
-
-- (void)handleReceivedData:(unsigned char *)data length:(int)length;
+@interface BXDashboardViewController : UIViewController <BXDashboardBLEDelegate, BXConnectViewControllerDelegate>
 
 @end

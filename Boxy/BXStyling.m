@@ -23,6 +23,10 @@
                            alpha:1.0];
 }
 
++ (UIColor *)blackColor {
+    return [self colorFromHexString:@"#1F1F1F"];
+}
+
 + (UIColor *)darkColor {
     return [self colorFromHexString:@"#556270"];
 }

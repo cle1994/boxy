@@ -10,4 +10,8 @@
 
 @interface BXNavigationController : UINavigationController
 
+- (void)setBarWithColor:(UIColor *)color;
+- (void)setTitleAttributesWithAttributes:(NSDictionary *)attributes;
+- (void)setBarStyleWithStyle:(UIBarStyle)style;
+
 @end
