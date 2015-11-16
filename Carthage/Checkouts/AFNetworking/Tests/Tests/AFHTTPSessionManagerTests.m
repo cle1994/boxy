@@ -121,14 +121,16 @@
         return [dirURL URLByAppendingPathComponent:@"t1.file"];
     }];
 
-    NSURLSessionDownloadTask *downloadTask = [self.manager downloadTaskWithRequest:[NSURLRequest requestWithURL:self.baseURL]
-                                                                          progress:nil
-                                                                       destination:nil
-                                                                 completionHandler:^(NSURLResponse *response, NSURL *filePath, NSError *error) {
-                                                                     downloadFilePath = filePath;
-                                                                     completionBlockExecuted = YES;
-                                                                     [expectation fulfill];
-                                                                 }];
+    NSURLSessionDownloadTask *downloadTask;
+    downloadTask = [self.manager
+                    downloadTaskWithRequest:[NSURLRequest requestWithURL:self.baseURL]
+                    progress:nil
+                    destination:nil
+                    completionHandler:^(NSURLResponse *response, NSURL *filePath, NSError *error) {
+                        downloadFilePath = filePath;
+                        completionBlockExecuted = YES;
+                        [expectation fulfill];
+                    }];
     [downloadTask resume];
     [self waitForExpectationsWithTimeout:10.0 handler:nil];
     XCTAssertTrue(completionBlockExecuted);
@@ -161,6 +163,68 @@
     XCTAssertNotNil(downloadFilePath);
 }
 
+- (void)testThatSerializationErrorGeneratesErrorAndNullTaskForGET {
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Serialization should fail"];
+
+    [self.manager.requestSerializer setQueryStringSerializationWithBlock:^NSString * _Nonnull(NSURLRequest * _Nonnull request, id  _Nonnull parameters, NSError * _Nullable __autoreleasing * _Nullable error) {
+        *error = [NSError errorWithDomain:@"Custom" code:-1 userInfo:nil];
+        return @"";
+    }];
+
+    NSURLSessionTask *nilTask;
+    nilTask = [self.manager
+               GET:@"test"
+               parameters:@{@"key":@"value"}
+               success:nil
+               failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+                   XCTAssertNil(task);
+                   [expectation fulfill];
+               }];
+    XCTAssertNil(nilTask);
+    [self waitForExpectationsWithTimeout:10.0 handler:nil];
+}
+
+
+# pragma mark - Rest Interface
+
+- (void)testThatSuccessBlockIsCalledFor200 {
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Request should succeed"];
+    [self.manager
+     GET:@"status/200"
+     parameters:nil
+     success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+         [expectation fulfill];
+     }
+     failure:nil];
+    [self waitForExpectationsWithCommonTimeoutUsingHandler:nil];
+}
+
+- (void)testThatFailureBlockIsCalledFor404 {
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Request should succeed"];
+    [self.manager
+     GET:@"status/404"
+     parameters:nil
+     success:nil
+     failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nullable error) {
+         [expectation fulfill];
+     }];
+    [self waitForExpectationsWithCommonTimeoutUsingHandler:nil];
+}
+
+- (void)testThatResponseObjectIsEmptyFor204 {
+    __block id urlResponseObject = nil;
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Request should succeed"];
+    [self.manager
+     GET:@"status/204"
+     parameters:nil
+     success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+         urlResponseObject = responseObject;
+         [expectation fulfill];
+     }
+     failure:nil];
+    [self waitForExpectationsWithCommonTimeoutUsingHandler:nil];
+    XCTAssertNil(urlResponseObject);
+}
 
 
 @end

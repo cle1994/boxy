@@ -1,3 +1,4 @@
-github "AFNetworking/AFNetworking" "3.0.0-beta.1"
+github "AFNetworking/AFNetworking" "3.0.0-beta.2"
 github "Flipboard/FLAnimatedImage" "1.0.8"
+github "soffes/SSKeychain" "v1.3.0"
 github "danielgindi/ios-charts" "v2.1.6"

@@ -6,7 +6,7 @@
 	<dict>
 		<key>Headers/AFHTTPSessionManager.h</key>
 		<data>
-		g4+20UBn05Mo8RKtpcqWwRS/nJc=
+		Aa3r2rNO7UyKQiFfuHgO6Bd37QA=
 		</data>
 		<key>Headers/AFNetworking.h</key>
 		<data>
@@ -14,23 +14,23 @@
 		</data>
 		<key>Headers/AFSecurityPolicy.h</key>
 		<data>
-		vjFraFjoKQpIObFy+OiYlTScr4A=
+		pXxXgv88TW7DsIbQixjHQ7M+gxo=
 		</data>
 		<key>Headers/AFURLRequestSerialization.h</key>
 		<data>
-		ONl5BKf0jv0IzCWnMlRijNSVH0U=
+		+xZUnombJyNIDlevFE9ECJwTlGM=
 		</data>
 		<key>Headers/AFURLResponseSerialization.h</key>
 		<data>
-		vDbHYdGy7SuGrdhX/rL3poGo11g=
+		FwhKiiyZLio94+PXD5a7DlBJ1oc=
 		</data>
 		<key>Headers/AFURLSessionManager.h</key>
 		<data>
-		AX4XIWEG318+WukAS6NpensQdbA=
+		/xgrNo/xmNJXkA7Lc1/avvODaBM=
 		</data>
 		<key>Info.plist</key>
 		<data>
-		MqgETBPF4tPPTaUhiF2VD+A5Up8=
+		XG6ByLqUkEUY0QtCQ+7ZCdP9AY4=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -41,7 +41,7 @@
 	<dict>
 		<key>Headers/AFHTTPSessionManager.h</key>
 		<data>
-		g4+20UBn05Mo8RKtpcqWwRS/nJc=
+		Aa3r2rNO7UyKQiFfuHgO6Bd37QA=
 		</data>
 		<key>Headers/AFNetworking.h</key>
 		<data>
@@ -49,19 +49,19 @@
 		</data>
 		<key>Headers/AFSecurityPolicy.h</key>
 		<data>
-		vjFraFjoKQpIObFy+OiYlTScr4A=
+		pXxXgv88TW7DsIbQixjHQ7M+gxo=
 		</data>
 		<key>Headers/AFURLRequestSerialization.h</key>
 		<data>
-		ONl5BKf0jv0IzCWnMlRijNSVH0U=
+		+xZUnombJyNIDlevFE9ECJwTlGM=
 		</data>
 		<key>Headers/AFURLResponseSerialization.h</key>
 		<data>
-		vDbHYdGy7SuGrdhX/rL3poGo11g=
+		FwhKiiyZLio94+PXD5a7DlBJ1oc=
 		</data>
 		<key>Headers/AFURLSessionManager.h</key>
 		<data>
-		AX4XIWEG318+WukAS6NpensQdbA=
+		/xgrNo/xmNJXkA7Lc1/avvODaBM=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>

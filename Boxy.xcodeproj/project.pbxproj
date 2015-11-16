@@ -9,25 +9,26 @@
 /* Begin PBXBuildFile section */
 		AA08BB7A1BF56FB700842346 /* BXSyncingPopupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA08BB791BF56FB700842346 /* BXSyncingPopupViewController.m */; };
 		AA0C156F1BEC866F004A5F50 /* BXDashboardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA0C156E1BEC866F004A5F50 /* BXDashboardViewController.m */; };
-		AA5E72001BF0887600ABDDA3 /* Charts.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = AA5E71FC1BF07E2200ABDDA3 /* Charts.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		AA68B0AC1BEC34E60095984A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AA68B0AB1BEC34E60095984A /* main.m */; };
 		AA68B0AF1BEC34E60095984A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AA68B0AE1BEC34E60095984A /* AppDelegate.m */; };
 		AA68B0B11BEC34E60095984A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA68B0B01BEC34E60095984A /* Assets.xcassets */; };
 		AA68B0B41BEC34E60095984A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA68B0B21BEC34E60095984A /* LaunchScreen.storyboard */; };
 		AA68B0BC1BEC34FA0095984A /* Cartfile in Resources */ = {isa = PBXBuildFile; fileRef = AA68B0BB1BEC34FA0095984A /* Cartfile */; };
 		AA68B0BF1BEC358E0095984A /* BXStyling.m in Sources */ = {isa = PBXBuildFile; fileRef = AA68B0BE1BEC358E0095984A /* BXStyling.m */; };
-		AA68B0C21BEC391D0095984A /* AFNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA68B0C11BEC391D0095984A /* AFNetworking.framework */; };
 		AA68B0C61BEC39BB0095984A /* BXNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA68B0C51BEC39BB0095984A /* BXNavigationController.m */; };
 		AA68B0C91BEC3C110095984A /* BXConnectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA68B0C81BEC3C110095984A /* BXConnectViewController.m */; };
 		AA68B0D01BEC3E640095984A /* BLE.m in Sources */ = {isa = PBXBuildFile; fileRef = AA68B0CE1BEC3E640095984A /* BLE.m */; };
+		AAD6EA461BF9D49C00C60A7C /* FLAnimatedImage.m in Sources */ = {isa = PBXBuildFile; fileRef = AAD6EA431BF9D49C00C60A7C /* FLAnimatedImage.m */; };
+		AAD6EA471BF9D49C00C60A7C /* FLAnimatedImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = AAD6EA451BF9D49C00C60A7C /* FLAnimatedImageView.m */; };
+		AAD6EA491BF9D4B700C60A7C /* AFNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAD6EA481BF9D4B700C60A7C /* AFNetworking.framework */; };
+		AAD6EA4B1BF9D4C300C60A7C /* Charts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAD6EA4A1BF9D4C300C60A7C /* Charts.framework */; };
+		AAD6EA4D1BF9D4CA00C60A7C /* SSKeychain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAD6EA4C1BF9D4CA00C60A7C /* SSKeychain.framework */; };
 		AAE702591BF1E9810033ACBC /* BXGraphViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AAE702581BF1E9810033ACBC /* BXGraphViewController.m */; };
 		AAE7025C1BF1E99F0033ACBC /* BXSyncViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AAE7025B1BF1E99F0033ACBC /* BXSyncViewController.m */; };
 		AAF9AEA31BF3099C00C22FFF /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAF9AEA21BF3099C00C22FFF /* QuartzCore.framework */; };
 		AAF9AEA51BF32F0B00C22FFF /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAF9AEA41BF32F0B00C22FFF /* ImageIO.framework */; };
 		AAF9AEA71BF32F1700C22FFF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAF9AEA61BF32F1700C22FFF /* CoreGraphics.framework */; };
 		AAF9AEA91BF32F1E00C22FFF /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAF9AEA81BF32F1E00C22FFF /* MobileCoreServices.framework */; };
-		AAF9AEAF1BF3312200C22FFF /* FLAnimatedImage.m in Sources */ = {isa = PBXBuildFile; fileRef = AAF9AEAC1BF3312200C22FFF /* FLAnimatedImage.m */; };
-		AAF9AEB01BF3312200C22FFF /* FLAnimatedImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = AAF9AEAE1BF3312200C22FFF /* FLAnimatedImageView.m */; };
 		AAF9AEB21BF33D9C00C22FFF /* loading.gif in Resources */ = {isa = PBXBuildFile; fileRef = AAF9AEB11BF33D9C00C22FFF /* loading.gif */; };
 /* End PBXBuildFile section */
 
@@ -38,7 +39,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				AA5E72001BF0887600ABDDA3 /* Charts.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -50,7 +50,6 @@
 		AA08BB791BF56FB700842346 /* BXSyncingPopupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSyncingPopupViewController.m; sourceTree = "<group>"; };
 		AA0C156D1BEC866F004A5F50 /* BXDashboardViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDashboardViewController.h; sourceTree = "<group>"; };
 		AA0C156E1BEC866F004A5F50 /* BXDashboardViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDashboardViewController.m; sourceTree = "<group>"; };
-		AA5E71FC1BF07E2200ABDDA3 /* Charts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Charts.framework; path = ../Carthage/Build/iOS/Charts.framework; sourceTree = "<group>"; };
 		AA68B0A71BEC34E60095984A /* Boxy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Boxy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA68B0AB1BEC34E60095984A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		AA68B0AD1BEC34E60095984A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -61,7 +60,6 @@
 		AA68B0BB1BEC34FA0095984A /* Cartfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		AA68B0BD1BEC358E0095984A /* BXStyling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXStyling.h; sourceTree = "<group>"; };
 		AA68B0BE1BEC358E0095984A /* BXStyling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXStyling.m; sourceTree = "<group>"; };
-		AA68B0C11BEC391D0095984A /* AFNetworking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AFNetworking.framework; path = ../Carthage/Build/iOS/AFNetworking.framework; sourceTree = "<group>"; };
 		AA68B0C41BEC39BB0095984A /* BXNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXNavigationController.h; sourceTree = "<group>"; };
 		AA68B0C51BEC39BB0095984A /* BXNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXNavigationController.m; sourceTree = "<group>"; };
 		AA68B0C71BEC3C110095984A /* BXConnectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXConnectViewController.h; sourceTree = "<group>"; };
@@ -69,6 +67,13 @@
 		AA68B0CD1BEC3E640095984A /* BLE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BLE.h; path = BLE/BLE.h; sourceTree = SOURCE_ROOT; };
 		AA68B0CE1BEC3E640095984A /* BLE.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BLE.m; path = BLE/BLE.m; sourceTree = SOURCE_ROOT; };
 		AA68B0CF1BEC3E640095984A /* BLEDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BLEDefines.h; path = BLE/BLEDefines.h; sourceTree = SOURCE_ROOT; };
+		AAD6EA421BF9D49C00C60A7C /* FLAnimatedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLAnimatedImage.h; sourceTree = "<group>"; };
+		AAD6EA431BF9D49C00C60A7C /* FLAnimatedImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLAnimatedImage.m; sourceTree = "<group>"; };
+		AAD6EA441BF9D49C00C60A7C /* FLAnimatedImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLAnimatedImageView.h; sourceTree = "<group>"; };
+		AAD6EA451BF9D49C00C60A7C /* FLAnimatedImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLAnimatedImageView.m; sourceTree = "<group>"; };
+		AAD6EA481BF9D4B700C60A7C /* AFNetworking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AFNetworking.framework; path = Carthage/Build/iOS/AFNetworking.framework; sourceTree = SOURCE_ROOT; };
+		AAD6EA4A1BF9D4C300C60A7C /* Charts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Charts.framework; path = Carthage/Build/iOS/Charts.framework; sourceTree = SOURCE_ROOT; };
+		AAD6EA4C1BF9D4CA00C60A7C /* SSKeychain.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SSKeychain.framework; path = Carthage/Build/iOS/SSKeychain.framework; sourceTree = SOURCE_ROOT; };
 		AAE702571BF1E9810033ACBC /* BXGraphViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGraphViewController.h; sourceTree = "<group>"; };
 		AAE702581BF1E9810033ACBC /* BXGraphViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGraphViewController.m; sourceTree = "<group>"; };
 		AAE7025A1BF1E99F0033ACBC /* BXSyncViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSyncViewController.h; sourceTree = "<group>"; };
@@ -79,10 +84,6 @@
 		AAF9AEA41BF32F0B00C22FFF /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		AAF9AEA61BF32F1700C22FFF /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		AAF9AEA81BF32F1E00C22FFF /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
-		AAF9AEAB1BF3312200C22FFF /* FLAnimatedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLAnimatedImage.h; sourceTree = "<group>"; };
-		AAF9AEAC1BF3312200C22FFF /* FLAnimatedImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLAnimatedImage.m; sourceTree = "<group>"; };
-		AAF9AEAD1BF3312200C22FFF /* FLAnimatedImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLAnimatedImageView.h; sourceTree = "<group>"; };
-		AAF9AEAE1BF3312200C22FFF /* FLAnimatedImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLAnimatedImageView.m; sourceTree = "<group>"; };
 		AAF9AEB11BF33D9C00C22FFF /* loading.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = loading.gif; path = ../Images/loading.gif; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -92,10 +93,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				AAF9AEA91BF32F1E00C22FFF /* MobileCoreServices.framework in Frameworks */,
+				AAD6EA491BF9D4B700C60A7C /* AFNetworking.framework in Frameworks */,
+				AAD6EA4D1BF9D4CA00C60A7C /* SSKeychain.framework in Frameworks */,
 				AAF9AEA71BF32F1700C22FFF /* CoreGraphics.framework in Frameworks */,
+				AAD6EA4B1BF9D4C300C60A7C /* Charts.framework in Frameworks */,
 				AAF9AEA51BF32F0B00C22FFF /* ImageIO.framework in Frameworks */,
 				AAF9AEA31BF3099C00C22FFF /* QuartzCore.framework in Frameworks */,
-				AA68B0C21BEC391D0095984A /* AFNetworking.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -161,14 +164,15 @@
 		AA68B0C01BEC39090095984A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				AAF9AEAA1BF3312200C22FFF /* FLAnimatedImage */,
-				AA68B0C11BEC391D0095984A /* AFNetworking.framework */,
+				AAD6EA481BF9D4B700C60A7C /* AFNetworking.framework */,
 				AA68B0CC1BEC3E450095984A /* BLE */,
-				AA5E71FC1BF07E2200ABDDA3 /* Charts.framework */,
+				AAD6EA4A1BF9D4C300C60A7C /* Charts.framework */,
 				AAF9AEA61BF32F1700C22FFF /* CoreGraphics.framework */,
+				AAF9AEAA1BF3312200C22FFF /* FLAnimatedImage */,
 				AAF9AEA41BF32F0B00C22FFF /* ImageIO.framework */,
 				AAF9AEA81BF32F1E00C22FFF /* MobileCoreServices.framework */,
 				AAF9AEA21BF3099C00C22FFF /* QuartzCore.framework */,
+				AAD6EA4C1BF9D4CA00C60A7C /* SSKeychain.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -186,10 +190,10 @@
 		AAF9AEAA1BF3312200C22FFF /* FLAnimatedImage */ = {
 			isa = PBXGroup;
 			children = (
-				AAF9AEAB1BF3312200C22FFF /* FLAnimatedImage.h */,
-				AAF9AEAC1BF3312200C22FFF /* FLAnimatedImage.m */,
-				AAF9AEAD1BF3312200C22FFF /* FLAnimatedImageView.h */,
-				AAF9AEAE1BF3312200C22FFF /* FLAnimatedImageView.m */,
+				AAD6EA421BF9D49C00C60A7C /* FLAnimatedImage.h */,
+				AAD6EA431BF9D49C00C60A7C /* FLAnimatedImage.m */,
+				AAD6EA441BF9D49C00C60A7C /* FLAnimatedImageView.h */,
+				AAD6EA451BF9D49C00C60A7C /* FLAnimatedImageView.m */,
 			);
 			path = FLAnimatedImage;
 			sourceTree = SOURCE_ROOT;
@@ -278,6 +282,8 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/AFNetworking.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Charts.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/SSKeychain.framework",
 			);
 			outputPaths = (
 			);
@@ -293,17 +299,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA0C156F1BEC866F004A5F50 /* BXDashboardViewController.m in Sources */,
+				AAD6EA461BF9D49C00C60A7C /* FLAnimatedImage.m in Sources */,
 				AA08BB7A1BF56FB700842346 /* BXSyncingPopupViewController.m in Sources */,
 				AA68B0AF1BEC34E60095984A /* AppDelegate.m in Sources */,
-				AAF9AEAF1BF3312200C22FFF /* FLAnimatedImage.m in Sources */,
 				AA68B0C61BEC39BB0095984A /* BXNavigationController.m in Sources */,
 				AAE7025C1BF1E99F0033ACBC /* BXSyncViewController.m in Sources */,
 				AA68B0C91BEC3C110095984A /* BXConnectViewController.m in Sources */,
 				AA68B0D01BEC3E640095984A /* BLE.m in Sources */,
 				AAE702591BF1E9810033ACBC /* BXGraphViewController.m in Sources */,
-				AAF9AEB01BF3312200C22FFF /* FLAnimatedImageView.m in Sources */,
 				AA68B0BF1BEC358E0095984A /* BXStyling.m in Sources */,
 				AA68B0AC1BEC34E60095984A /* main.m in Sources */,
+				AAD6EA471BF9D49C00C60A7C /* FLAnimatedImageView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

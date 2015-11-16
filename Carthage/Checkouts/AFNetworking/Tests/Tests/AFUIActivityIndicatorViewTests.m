@@ -57,9 +57,10 @@
     self.activityIndicatorView = nil;
     
     [task resume];
-    [self waitForExpectationsWithTimeout:5.0 handler:nil];
+    [self waitForExpectationsWithCommonTimeoutUsingHandler:nil];
     [task cancel];
 }
+
 
 - (void)testTaskDidCompleteNotificationDoesNotCauseCrashForAIVWithTask {
     XCTestExpectation *expectation = [self expectationWithDescription:@"No Crash"];
@@ -79,7 +80,7 @@
     self.activityIndicatorView = nil;
     
     [task resume];
-    [self waitForExpectationsWithTimeout:5.0 handler:nil];
+    [self waitForExpectationsWithCommonTimeoutUsingHandler:nil];
     [task cancel];
 }
 
@@ -103,7 +104,7 @@
     [task resume];
     [task suspend];
     [task resume];
-    [self waitForExpectationsWithTimeout:5.0 handler:nil];
+    [self waitForExpectationsWithCommonTimeoutUsingHandler:nil];
     [task cancel];
 }
 
