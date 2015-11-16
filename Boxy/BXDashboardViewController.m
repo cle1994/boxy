@@ -11,6 +11,7 @@
 #import "BXPageViewChildProtocol.h"
 #import "BXGraphViewController.h"
 #import "BXSyncViewController.h"
+#import "BXSettingsViewController.h"
 #import "BXSyncingPopupViewController.h"
 #import "BXStyling.h"
 #import "BLE.h"
@@ -32,6 +33,9 @@
 @property (strong, nonatomic) UISegmentedControl *pageViewSegmentedSwitcher;
 @property (strong, nonatomic) NSMutableArray *pageViewChildren;
 
+// Settings
+@property (strong, nonatomic) BXSettingsViewController *settingsViewController;
+
 @end
 
 NSString *const UUIDPrefKey = @"UUIDPrefKey";
@@ -46,6 +50,12 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
         self.navigationController.navigationBar.barTintColor =
             [BXStyling lightColor];
         self.view.backgroundColor = [BXStyling lightColor];
+
+        self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]
+            initWithImage:[UIImage imageNamed:@"SettingIcon"]
+                    style:UIBarButtonItemStylePlain
+                   target:self
+                   action:@selector(launchSettings)];
     }
 
     return self;
@@ -152,6 +162,29 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
     [_popupViewController didMoveToParentViewController:self];
 
     [_popupViewController shouldAnimate:YES];
+}
+
+- (void)launchSettings {
+    NSLog(@"Settings");
+
+    _settingsViewController = [[BXSettingsViewController alloc] init];
+
+    BXNavigationController *settingsNavigationController =
+        [[BXNavigationController alloc]
+            initWithRootViewController:_settingsViewController];
+
+    [settingsNavigationController setBarWithColor:[BXStyling primaryColor]];
+    [settingsNavigationController setBarStyleWithStyle:UIBarStyleDefault];
+    [settingsNavigationController setTitleAttributesWithAttributes:@{
+        NSForegroundColorAttributeName : [BXStyling blackColor]
+    }];
+
+    [self.navigationController
+        presentViewController:settingsNavigationController
+                     animated:YES
+                   completion:^(void) {
+                     [self scanForDevicesAndConnectLast:NO];
+                   }];
 }
 
 #pragma mark - BLE Delegate
