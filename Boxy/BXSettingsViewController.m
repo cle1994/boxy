@@ -6,14 +6,25 @@
 //  Copyright © 2015 christianle. All rights reserved.
 //
 
+@import SSKeychain;
+
 #import "BXSettingsViewController.h"
 #import "BXStyling.h"
 
-@interface BXSettingsViewController ()
+@interface BXSettingsViewController ()<STTwitterAPIOSProtocol>
 
+@property (strong, nonatomic) UITextField *twitterLogin;
+@property (strong, nonatomic) UITextField *twitterPassword;
 @property (strong, nonatomic) UIButton *twitterButton;
+@property (nonatomic) BOOL shouldHideTwitterLogin;
 
 @end
+
+NSString *const TwitterString = @"Twitter";
+NSString *const TwitterLogin = @"TwitterLogin";
+NSString *const TwitterKey = @"AMMIgdq6BmnZSZPxgryF2P3Gd";
+NSString *const TwitterSecret =
+    @"ZkumQqABuoqG6WgbLQZVoSvJqgTQ4ACcet0jOqCIYC6tWL2YHi";
 
 @implementation BXSettingsViewController
 
@@ -29,6 +40,8 @@
         [self.navigationItem.leftBarButtonItem
             setTintColor:[BXStyling blackColor]];
 
+        [self loginToTwitter];
+
         _twitterButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_twitterButton setTitle:@"Sign In to Twitter"
                         forState:UIControlStateNormal];
@@ -42,6 +55,8 @@
                            action:@selector(signInToTwitter)
                  forControlEvents:UIControlEventTouchUpInside];
 
+        [self.view addSubview:_twitterLogin];
+        [self.view addSubview:_twitterPassword];
         [self.view addSubview:_twitterButton];
     }
 
@@ -57,6 +72,10 @@
     [self _installConstraints];
 }
 
+- (void)loginToTwitter {
+    self.twitter = [STTwitterAPI twitterAPIOSWithFirstAccountAndDelegate:self];
+}
+
 #pragma mark - Selectors
 
 - (void)dismissModal {
@@ -64,7 +83,14 @@
 }
 
 - (void)signInToTwitter {
-    NSLog(@"Twitter");
+    [self loginToTwitter];
+}
+
+#pragma mark - STTwiterAPIOSProtocol
+
+- (void)twitterAPI:(STTwitterAPI *)twitterAPI
+    accountWasInvalidated:(ACAccount *)invalidatedAccount {
+    NSLog(@"%@", invalidatedAccount);
 }
 
 #pragma mark - Constraints
@@ -76,7 +102,7 @@
 
     NSDictionary *views = NSDictionaryOfVariableBindings(_twitterButton);
 
-    NSDictionary *metrics = @{ @"margin" : @(30) };
+    NSDictionary *metrics = @{ @"margin" : @(20) };
 
     [self.view addConstraints:[NSLayoutConstraint
                                   constraintsWithVisualFormat:

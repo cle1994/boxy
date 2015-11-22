@@ -8,6 +8,10 @@
 
 @import UIKit;
 
+#import "STTwitter.h"
+
 @interface BXSettingsViewController : UIViewController
+
+@property STTwitterAPI *twitter;
 
 @end
