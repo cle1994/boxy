@@ -90,6 +90,7 @@ NSString *const TwitterSecret =
 
 - (void)twitterAPI:(STTwitterAPI *)twitterAPI
     accountWasInvalidated:(ACAccount *)invalidatedAccount {
+    NSLog(@"Unable to login to Twitter");
     NSLog(@"%@", invalidatedAccount);
 }
 
