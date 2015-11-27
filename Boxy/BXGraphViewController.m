@@ -22,10 +22,8 @@
 - (instancetype)init {
     if (self = [super init]) {
         self.title = @"Progress";
-        self.navigationController.navigationBar.tintColor =
-            [BXStyling lightColor];
-        self.navigationController.navigationBar.barTintColor =
-            [BXStyling lightColor];
+        self.navigationController.navigationBar.tintColor = [BXStyling lightColor];
+        self.navigationController.navigationBar.barTintColor = [BXStyling lightColor];
         self.view.backgroundColor = [BXStyling lightColor];
 
         [self.view addSubview:_lineChartView];
@@ -62,9 +60,7 @@
 
     [self setDataCount:20 range:100.0];
 
-    [_lineChartView animateWithXAxisDuration:3.0
-                               yAxisDuration:3.0
-                                easingOption:ChartEasingOptionEaseInOutQuart];
+    [_lineChartView animateWithXAxisDuration:3.0 yAxisDuration:3.0 easingOption:ChartEasingOptionEaseInOutQuart];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -92,8 +88,7 @@
         [yVals addObject:[[ChartDataEntry alloc] initWithValue:val xIndex:i]];
     }
 
-    LineChartDataSet *set =
-        [[LineChartDataSet alloc] initWithYVals:yVals label:@"Last Import"];
+    LineChartDataSet *set = [[LineChartDataSet alloc] initWithYVals:yVals label:@"Last Import"];
 
     set.lineWidth = 2.0;
     set.circleRadius = 3.0;
@@ -101,7 +96,7 @@
     set.valueFont = [UIFont systemFontOfSize:10.0f];
     set.fillAlpha = 64 / 255.0;
     set.fillColor = [BXStyling primaryColor];
-    set.highlightLineDashLengths = @[ @5.f, @2.5f ];
+    set.highlightLineDashLengths = @[@5.f, @2.5f];
     set.drawCubicEnabled = YES;
     [set setColor:[BXStyling primaryColor]];
     [set setCircleColor:[BXStyling accentColor]];
@@ -110,19 +105,16 @@
     NSMutableArray *dataSets = [[NSMutableArray alloc] init];
     [dataSets addObject:set];
 
-    LineChartData *data =
-        [[LineChartData alloc] initWithXVals:xVals dataSet:set];
+    LineChartData *data = [[LineChartData alloc] initWithXVals:xVals dataSet:set];
 
     _lineChartView.data = data;
     [_lineChartView notifyDataSetChanged];
-    
+
     [self forceAnimation];
 }
 
 - (void)forceAnimation {
-    [_lineChartView animateWithXAxisDuration:3.0
-                               yAxisDuration:3.0
-                                easingOption:ChartEasingOptionEaseInOutQuart];
+    [_lineChartView animateWithXAxisDuration:3.0 yAxisDuration:3.0 easingOption:ChartEasingOptionEaseInOutQuart];
 }
 
 #pragma mark - Chart View Delegate
@@ -142,22 +134,16 @@
 
 - (void)_installConstraint {
     self.view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
-    
+
     _lineChartView.translatesAutoresizingMaskIntoConstraints = NO;
-    
+
     NSDictionary *views = NSDictionaryOfVariableBindings(_lineChartView);
-    
-    NSDictionary *metrics = @{ @"margin" : @(20) };
-    
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-margin-[_lineChartView]-margin-|"
-                                                            options:0
-                                                            metrics:metrics
-                                                              views:views]];
-    
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-margin-[_lineChartView]-margin-|"
-                               options:0
-                               metrics:metrics
-                               views:views]];
+
+    NSDictionary *metrics = @{ @"margin": @(20) };
+
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-margin-[_lineChartView]-margin-|" options:0 metrics:metrics views:views]];
+
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-margin-[_lineChartView]-margin-|" options:0 metrics:metrics views:views]];
 }
 
 @end

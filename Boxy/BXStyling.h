@@ -23,4 +23,6 @@
 + (UIColor *)accentColor;
 + (UIColor *)dangerColor;
 
++ (UIColor *)headerBackgroundColor;
+
 @end

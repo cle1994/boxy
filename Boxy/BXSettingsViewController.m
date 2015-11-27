@@ -23,8 +23,7 @@
 NSString *const TwitterString = @"Twitter";
 NSString *const TwitterLogin = @"TwitterLogin";
 NSString *const TwitterKey = @"AMMIgdq6BmnZSZPxgryF2P3Gd";
-NSString *const TwitterSecret =
-    @"ZkumQqABuoqG6WgbLQZVoSvJqgTQ4ACcet0jOqCIYC6tWL2YHi";
+NSString *const TwitterSecret = @"ZkumQqABuoqG6WgbLQZVoSvJqgTQ4ACcet0jOqCIYC6tWL2YHi";
 
 @implementation BXSettingsViewController
 
@@ -33,27 +32,19 @@ NSString *const TwitterSecret =
         self.title = @"Settings";
         self.view.backgroundColor = [BXStyling lightColor];
 
-        self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]
-            initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
-                                 target:self
-                                 action:@selector(dismissModal)];
-        [self.navigationItem.leftBarButtonItem
-            setTintColor:[BXStyling blackColor]];
+        self.navigationItem.leftBarButtonItem =
+            [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(dismissModal)];
+        [self.navigationItem.leftBarButtonItem setTintColor:[BXStyling lightColor]];
 
         [self loginToTwitter];
 
         _twitterButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_twitterButton setTitle:@"Sign In to Twitter"
-                        forState:UIControlStateNormal];
-        [_twitterButton setTitleColor:[BXStyling primaryColor]
-                             forState:UIControlStateNormal];
-        [_twitterButton setTitleColor:[BXStyling mediumColor]
-                             forState:UIControlStateSelected];
-        [_twitterButton setTitleColor:[BXStyling mediumColor]
-                             forState:UIControlStateFocused];
-        [_twitterButton addTarget:self
-                           action:@selector(signInToTwitter)
-                 forControlEvents:UIControlEventTouchUpInside];
+        _twitterButton.backgroundColor = [BXStyling primaryColor];
+        [_twitterButton setTitle:@"Sign In to Twitter" forState:UIControlStateNormal];
+        [_twitterButton setTitleColor:[BXStyling lightColor] forState:UIControlStateNormal];
+        [_twitterButton setTitleColor:[BXStyling mediumColor] forState:UIControlStateSelected];
+        [_twitterButton setTitleColor:[BXStyling mediumColor] forState:UIControlStateFocused];
+        [_twitterButton addTarget:self action:@selector(signInToTwitter) forControlEvents:UIControlEventTouchUpInside];
 
         [self.view addSubview:_twitterLogin];
         [self.view addSubview:_twitterPassword];
@@ -74,6 +65,12 @@ NSString *const TwitterSecret =
 
 - (void)loginToTwitter {
     self.twitter = [STTwitterAPI twitterAPIOSWithFirstAccountAndDelegate:self];
+    [self.twitter verifyCredentialsWithUserSuccessBlock:^(NSString *username, NSString *userID) {
+      NSLog(@"Success");
+    } errorBlock:^(NSError *error) {
+      NSLog(@"Error");
+      self.twitter = nil;
+    }];
 }
 
 #pragma mark - Selectors
@@ -88,8 +85,7 @@ NSString *const TwitterSecret =
 
 #pragma mark - STTwiterAPIOSProtocol
 
-- (void)twitterAPI:(STTwitterAPI *)twitterAPI
-    accountWasInvalidated:(ACAccount *)invalidatedAccount {
+- (void)twitterAPI:(STTwitterAPI *)twitterAPI accountWasInvalidated:(ACAccount *)invalidatedAccount {
     NSLog(@"Unable to login to Twitter");
     NSLog(@"%@", invalidatedAccount);
 }
@@ -103,21 +99,19 @@ NSString *const TwitterSecret =
 
     NSDictionary *views = NSDictionaryOfVariableBindings(_twitterButton);
 
-    NSDictionary *metrics = @{ @"margin" : @(20) };
+    NSDictionary *metrics = @{ @"margin": @(20) };
 
-    [self.view addConstraints:[NSLayoutConstraint
-                                  constraintsWithVisualFormat:
-                                      @"H:|-margin-[_twitterButton]-margin-|"
-                                                      options:0
-                                                      metrics:metrics
-                                                        views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-margin-[_twitterButton]-margin-|" options:0 metrics:metrics views:views]];
 
-    [self.view addConstraints:[NSLayoutConstraint
-                                  constraintsWithVisualFormat:
-                                      @"V:|-margin-[_twitterButton]-margin-|"
-                                                      options:0
-                                                      metrics:metrics
-                                                        views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-margin-[_twitterButton]-margin-|" options:0 metrics:metrics views:views]];
+
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_twitterButton
+                                                          attribute:NSLayoutAttributeHeight
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:nil
+                                                          attribute:NSLayoutAttributeNotAnAttribute
+                                                         multiplier:1.0
+                                                           constant:40.0]];
 }
 
 @end

@@ -8,9 +8,9 @@
 
 @import UIKit;
 
-#import "BXDashboardBLEDelegate.h"
+#import "BXDashboardDelegate.h"
 #import "BXConnectViewController.h"
 
-@interface BXDashboardViewController : UIViewController <BXDashboardBLEDelegate, BXConnectViewControllerDelegate>
+@interface BXDashboardViewController : UIViewController <BXDashboardDelegate, BXConnectViewControllerDelegate>
 
 @end

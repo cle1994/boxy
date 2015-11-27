@@ -23,13 +23,10 @@
 - (instancetype)init {
     if (self = [super init]) {
         self.title = @"Sync";
-        self.navigationController.navigationBar.tintColor =
-            [BXStyling lightColor];
-        self.navigationController.navigationBar.barTintColor =
-            [BXStyling lightColor];
+        self.navigationController.navigationBar.tintColor = [BXStyling lightColor];
+        self.navigationController.navigationBar.barTintColor = [BXStyling lightColor];
 
-        self.view.backgroundColor =
-            [[BXStyling lightColor] colorWithAlphaComponent:0.95];
+        self.view.backgroundColor = [[BXStyling lightColor] colorWithAlphaComponent:0.95];
 
         _shouldAnimate = NO;
 
@@ -37,17 +34,12 @@
         _syncIcon.contentMode = UIViewContentModeScaleAspectFill;
         _syncIcon.clipsToBounds = YES;
 
-        NSURL *url = [[NSBundle mainBundle] URLForResource:@"loading"
-                                             withExtension:@"gif"];
+        NSURL *url = [[NSBundle mainBundle] URLForResource:@"loading" withExtension:@"gif"];
         NSData *gifData = [NSData dataWithContentsOfURL:url];
-        FLAnimatedImage *animatedImage =
-            [FLAnimatedImage animatedImageWithGIFData:gifData];
+        FLAnimatedImage *animatedImage = [FLAnimatedImage animatedImageWithGIFData:gifData];
         _syncIcon.animatedImage = animatedImage;
 
-        UIGestureRecognizer *singleTapRecognizer =
-            [[UITapGestureRecognizer alloc]
-                initWithTarget:self
-                        action:@selector(handleSingleTap:)];
+        UIGestureRecognizer *singleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
         [singleTapRecognizer setCancelsTouchesInView:NO];
         [self.view addGestureRecognizer:singleTapRecognizer];
 
@@ -98,41 +90,37 @@
 
     [_syncIcon setTranslatesAutoresizingMaskIntoConstraints:NO];
 
-    [self.view addConstraint:[NSLayoutConstraint
-                                 constraintWithItem:_syncIcon
-                                          attribute:NSLayoutAttributeWidth
-                                          relatedBy:NSLayoutRelationEqual
-                                             toItem:self.view
-                                          attribute:NSLayoutAttributeWidth
-                                         multiplier:0.7
-                                           constant:0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_syncIcon
+                                                          attribute:NSLayoutAttributeWidth
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:self.view
+                                                          attribute:NSLayoutAttributeWidth
+                                                         multiplier:0.7
+                                                           constant:0]];
 
-    [self.view addConstraint:[NSLayoutConstraint
-                                 constraintWithItem:_syncIcon
-                                          attribute:NSLayoutAttributeHeight
-                                          relatedBy:NSLayoutRelationEqual
-                                             toItem:_syncIcon
-                                          attribute:NSLayoutAttributeWidth
-                                         multiplier:1.0
-                                           constant:0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_syncIcon
+                                                          attribute:NSLayoutAttributeHeight
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:_syncIcon
+                                                          attribute:NSLayoutAttributeWidth
+                                                         multiplier:1.0
+                                                           constant:0]];
 
-    [self.view addConstraint:[NSLayoutConstraint
-                                 constraintWithItem:_syncIcon
-                                          attribute:NSLayoutAttributeCenterX
-                                          relatedBy:NSLayoutRelationEqual
-                                             toItem:self.view
-                                          attribute:NSLayoutAttributeCenterX
-                                         multiplier:1.0
-                                           constant:0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_syncIcon
+                                                          attribute:NSLayoutAttributeCenterX
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:self.view
+                                                          attribute:NSLayoutAttributeCenterX
+                                                         multiplier:1.0
+                                                           constant:0]];
 
-    [self.view addConstraint:[NSLayoutConstraint
-                                 constraintWithItem:_syncIcon
-                                          attribute:NSLayoutAttributeCenterY
-                                          relatedBy:NSLayoutRelationEqual
-                                             toItem:self.view
-                                          attribute:NSLayoutAttributeCenterY
-                                         multiplier:1.0
-                                           constant:0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_syncIcon
+                                                          attribute:NSLayoutAttributeCenterY
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:self.view
+                                                          attribute:NSLayoutAttributeCenterY
+                                                         multiplier:1.0
+                                                           constant:0]];
 }
 
 @end

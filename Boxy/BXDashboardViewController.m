@@ -10,7 +10,7 @@
 #import "BXNavigationController.h"
 #import "BXPageViewChildProtocol.h"
 #import "BXGraphViewController.h"
-#import "BXSyncViewController.h"
+#import "BXHomeViewController.h"
 #import "BXSettingsViewController.h"
 #import "BXSyncingPopupViewController.h"
 #import "BXStyling.h"
@@ -28,13 +28,18 @@
 
 // Segmented Pages
 @property (strong, nonatomic) UIPageViewController *pageViewController;
-@property (strong, nonatomic) BXSyncViewController *syncViewController;
+@property (strong, nonatomic) BXHomeViewController *homeViewController;
 @property (strong, nonatomic) BXGraphViewController *graphViewController;
 @property (strong, nonatomic) UISegmentedControl *pageViewSegmentedSwitcher;
 @property (strong, nonatomic) NSMutableArray *pageViewChildren;
 
 // Settings
 @property (strong, nonatomic) BXSettingsViewController *settingsViewController;
+
+// BLE Data
+@property (strong, nonatomic) NSArray *message;
+@property (nonatomic) int messageIndex;
+@property (nonatomic) BOOL messageComplete;
 
 @end
 
@@ -45,17 +50,16 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
 - (instancetype)init {
     if (self = [super init]) {
         self.title = @"Dashboard";
-        self.navigationController.navigationBar.tintColor =
-            [BXStyling lightColor];
-        self.navigationController.navigationBar.barTintColor =
-            [BXStyling lightColor];
+        self.navigationController.navigationBar.tintColor = [BXStyling lightColor];
+        self.navigationController.navigationBar.barTintColor = [BXStyling lightColor];
         self.view.backgroundColor = [BXStyling lightColor];
 
-        self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]
-            initWithImage:[UIImage imageNamed:@"SettingIcon"]
-                    style:UIBarButtonItemStylePlain
-                   target:self
-                   action:@selector(launchSettings)];
+        self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"SettingIcon"]
+                                                                                 style:UIBarButtonItemStylePlain
+                                                                                target:self
+                                                                                action:@selector(launchSettings)];
+
+        _devices = [[NSMutableArray alloc] init];
     }
 
     return self;
@@ -70,8 +74,7 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
         [_ble controlSetup];
     }
 
-    _lastUUID =
-        [[NSUserDefaults standardUserDefaults] objectForKey:UUIDPrefKey];
+    _lastUUID = [[NSUserDefaults standardUserDefaults] objectForKey:UUIDPrefKey];
 
     [self scanForDevicesAndConnectLast:YES];
 
@@ -83,44 +86,37 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
     [self _installConstraints];
 
     CGSize viewSize = self.view.bounds.size;
-    [_popupViewController.view
-        setFrame:CGRectMake(0, 0, viewSize.width, viewSize.height)];
+    [_popupViewController.view setFrame:CGRectMake(0, 0, viewSize.width, viewSize.height)];
 }
 
 - (void)setupPageView {
-    NSArray *pageTitles = [NSArray arrayWithObjects:@"Sync", @"Graph", nil];
-    _pageViewSegmentedSwitcher =
-        [[UISegmentedControl alloc] initWithItems:pageTitles];
-    [_pageViewSegmentedSwitcher addTarget:self
-                                   action:@selector(switchPages:)
-                         forControlEvents:UIControlEventValueChanged];
+    NSArray *pageTitles = [NSArray arrayWithObjects:@"Home", @"Graph", nil];
+    _pageViewSegmentedSwitcher = [[UISegmentedControl alloc] initWithItems:pageTitles];
+    [_pageViewSegmentedSwitcher addTarget:self action:@selector(switchPages:) forControlEvents:UIControlEventValueChanged];
     _pageViewSegmentedSwitcher.selectedSegmentIndex = 0;
     _pageViewSegmentedSwitcher.tintColor = [BXStyling darkColor];
 
-    _syncViewController = [[BXSyncViewController alloc] init];
+    _homeViewController = [[BXHomeViewController alloc] init];
+    _homeViewController.delegate = self;
 
     _graphViewController = [[BXGraphViewController alloc] init];
 
     _pageViewChildren = [[NSMutableArray alloc] init];
-    [_pageViewChildren addObject:_syncViewController];
+    [_pageViewChildren addObject:_homeViewController];
     [_pageViewChildren addObject:_graphViewController];
     for (int i = 0; i < _pageViewChildren.count; i++) {
-        [(UIViewController<BXPageViewChildProtocol> *)_pageViewChildren[i]
-            setPageIndex:i];
+        [(UIViewController<BXPageViewChildProtocol> *)_pageViewChildren[i] setPageIndex:i];
     }
 
-    _pageViewController = [[UIPageViewController alloc]
-        initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll
-          navigationOrientation:
-              UIPageViewControllerNavigationOrientationHorizontal
-                        options:nil];
+    _pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll
+                                                          navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal
+                                                                        options:nil];
 
     [_pageViewController.view setFrame:[self.view bounds]];
-    [_pageViewController
-        setViewControllers:[NSArray arrayWithObject:_pageViewChildren[0]]
-                 direction:UIPageViewControllerNavigationDirectionForward
-                  animated:NO
-                completion:nil];
+    [_pageViewController setViewControllers:[NSArray arrayWithObject:_pageViewChildren[0]]
+                                  direction:UIPageViewControllerNavigationDirectionForward
+                                   animated:NO
+                                 completion:nil];
 
     [self addChildViewController:_pageViewController];
 
@@ -136,66 +132,47 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
     _connectViewController = [[BXConnectViewController alloc] init];
     _connectViewController.delegate = self;
 
-    BXNavigationController *connectNavigationController =
-        [[BXNavigationController alloc]
-            initWithRootViewController:_connectViewController];
+    BXNavigationController *connectNavigationController = [[BXNavigationController alloc] initWithRootViewController:_connectViewController];
 
-    [connectNavigationController setBarWithColor:[BXStyling primaryColor]];
+    [connectNavigationController setBarWithColor:[BXStyling headerBackgroundColor]];
     [connectNavigationController setBarStyleWithStyle:UIBarStyleDefault];
-    [connectNavigationController setTitleAttributesWithAttributes:@{
-        NSForegroundColorAttributeName : [BXStyling blackColor]
-    }];
+    [connectNavigationController setTitleAttributesWithAttributes:@{NSForegroundColorAttributeName: [BXStyling lightColor]}];
 
-    [self.navigationController
-        presentViewController:connectNavigationController
-                     animated:YES
-                   completion:^(void) {
-                     [self scanForDevicesAndConnectLast:NO];
-                   }];
+    [self.navigationController presentViewController:connectNavigationController
+                                            animated:YES
+                                          completion:^(void) {
+                                            [self scanForDevicesAndConnectLast:NO];
+                                          }];
 }
 
 - (void)syncPeripheral {
     [self sendPeripheralRequest:@"d"];
-    [self addChildViewController:_popupViewController];
-    [self.view addSubview:_popupViewController.view];
-
-    [_popupViewController didMoveToParentViewController:self];
-
-    [_popupViewController shouldAnimate:YES];
 }
 
 - (void)launchSettings {
-    NSLog(@"Settings");
-
     _settingsViewController = [[BXSettingsViewController alloc] init];
 
-    BXNavigationController *settingsNavigationController =
-        [[BXNavigationController alloc]
-            initWithRootViewController:_settingsViewController];
+    BXNavigationController *settingsNavigationController = [[BXNavigationController alloc] initWithRootViewController:_settingsViewController];
 
-    [settingsNavigationController setBarWithColor:[BXStyling primaryColor]];
+    [settingsNavigationController setBarWithColor:[BXStyling headerBackgroundColor]];
     [settingsNavigationController setBarStyleWithStyle:UIBarStyleDefault];
-    [settingsNavigationController setTitleAttributesWithAttributes:@{
-        NSForegroundColorAttributeName : [BXStyling blackColor]
-    }];
+    [settingsNavigationController setTitleAttributesWithAttributes:@{NSForegroundColorAttributeName: [BXStyling lightColor]}];
 
-    [self.navigationController
-        presentViewController:settingsNavigationController
-                     animated:YES
-                   completion:^(void) {
-                     [self scanForDevicesAndConnectLast:NO];
-                   }];
+    [self.navigationController presentViewController:settingsNavigationController
+                                            animated:YES
+                                          completion:^(void) {
+                                            [self scanForDevicesAndConnectLast:NO];
+                                          }];
 }
 
 #pragma mark - BLE Delegate
 
 - (void)bleDidConnect {
     _lastUUID = [self getUUIDStringForPeripheral:_ble.activePeripheral];
-    [[NSUserDefaults standardUserDefaults] setObject:_lastUUID
-                                              forKey:UUIDPrefKey];
+    [[NSUserDefaults standardUserDefaults] setObject:_lastUUID forKey:UUIDPrefKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
 
-    [self updateNavigationWithPeripheralStatus:NO];
+    [self updateNavigationWithPeripheralStatus:YES];
 
     if ([self presentedViewController] != nil) {
         [self dismissViewControllerAnimated:YES completion:nil];
@@ -208,12 +185,22 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
 
 - (void)bleDidReceiveData:(unsigned char *)data length:(int)length {
     NSData *d = [NSData dataWithBytes:data length:length];
-    NSString *s =
-        [[NSString alloc] initWithData:d encoding:NSUTF8StringEncoding];
+    NSString *s = [[NSString alloc] initWithData:d encoding:NSUTF8StringEncoding];
+
     NSLog(@"%@", s);
+    if ([[s substringToIndex:1] isEqualToString:@"R"]) {
+        int ack = [[s substringFromIndex:1] intValue];
+        _messageIndex = ack + 1;
+
+        if (ack == [_message count] - 1) {
+            _messageComplete = YES;
+            [_ble write:[@"C" dataUsingEncoding:NSUTF8StringEncoding]];
+        } else {
+            [_ble write:[_message[_messageIndex] dataUsingEncoding:NSUTF8StringEncoding]];
+        }
+    }
 
     [_graphViewController setDataCount:20 range:100.0];
-    [_syncViewController updateData:s];
 }
 
 - (void)bleDidUpdateRSSI:(NSNumber *)rssi {
@@ -243,11 +230,7 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
 
     [_ble findBLEPeripherals:3];
 
-    [NSTimer scheduledTimerWithTimeInterval:(float)3.0
-                                     target:self
-                                   selector:@selector(connectionTimer:)
-                                   userInfo:nil
-                                    repeats:NO];
+    [NSTimer scheduledTimerWithTimeInterval:(float)3.0 target:self selector:@selector(connectionTimer:) userInfo:nil repeats:NO];
 }
 
 - (void)connectionTimer:(NSTimer *)timer {
@@ -259,10 +242,8 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
         if (_isFindingLast) {
             for (int i = 0; i < _ble.peripherals.count; i++) {
                 CBPeripheral *peripheral = [_ble.peripherals objectAtIndex:i];
-                NSString *peripheralUUID =
-                    [self getUUIDStringForPeripheral:peripheral];
-                if (peripheralUUID ||
-                    ![peripheralUUID isKindOfClass:[NSNull class]]) {
+                NSString *peripheralUUID = [self getUUIDStringForPeripheral:peripheral];
+                if (peripheralUUID || ![peripheralUUID isKindOfClass:[NSNull class]]) {
                     if ([_lastUUID isEqualToString:peripheralUUID]) {
                         [_ble connectPeripheral:peripheral];
                     }
@@ -271,10 +252,8 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
         } else {
             for (int i = 0; i < _ble.peripherals.count; i++) {
                 CBPeripheral *peripheral = [_ble.peripherals objectAtIndex:i];
-                NSString *peripheralUUID =
-                    [self getUUIDStringForPeripheral:peripheral];
-                if (peripheralUUID ||
-                    ![peripheralUUID isKindOfClass:[NSNull class]]) {
+                NSString *peripheralUUID = [self getUUIDStringForPeripheral:peripheral];
+                if (peripheralUUID || ![peripheralUUID isKindOfClass:[NSNull class]]) {
                     [_devices addObject:peripheral];
                 }
             }
@@ -283,6 +262,7 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
 
     if ([self presentedViewController] != nil) {
         NSLog(@"Sending devices to modal...");
+        NSLog(@"%@", _devices);
         [_connectViewController setDevices:_devices];
     }
 
@@ -297,12 +277,39 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
     [_ble connectPeripheral:_devices[index]];
 }
 
-#pragma mark - Handle Bluetooth Data
+#pragma mark - Dashboard Delegate
+
 - (void)sendPeripheralRequest:(NSString *)request {
-    if (request.length > 16) {
-        request = [request substringToIndex:16];
+    if (request.length > 20) {
+        request = [request substringToIndex:20];
     }
     [_ble write:[request dataUsingEncoding:NSUTF8StringEncoding]];
+}
+
+- (void)sendWorkout:(NSArray *)workout {
+    _message = workout;
+    _messageIndex = 0;
+    _messageComplete = false;
+    [_ble write:[workout[0] dataUsingEncoding:NSUTF8StringEncoding]];
+}
+
+- (void)postToTwitter:(NSString *)message {
+    NSLog(@"%@", _settingsViewController.twitter);
+    if (_settingsViewController.twitter) {
+        [_settingsViewController.twitter postStatusUpdate:message
+            inReplyToStatusID:nil
+            latitude:nil
+            longitude:nil
+            placeID:nil
+            displayCoordinates:nil
+            trimUser:nil
+            successBlock:^(NSDictionary *status) {
+              NSLog(@"Posting Success");
+            }
+            errorBlock:^(NSError *error) {
+              NSLog(@"Posting Error");
+            }];
+    }
 }
 
 #pragma mark - Handle Navigation Updates
@@ -310,20 +317,13 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
 - (void)updateNavigationWithPeripheralStatus:(BOOL)status {
     if (status) {
         self.navigationItem.rightBarButtonItem =
-            [[UIBarButtonItem alloc] initWithTitle:@"Sync"
-                                             style:UIBarButtonItemStylePlain
-                                            target:self
-                                            action:@selector(syncPeripheral)];
+            [[UIBarButtonItem alloc] initWithTitle:@"Sync" style:UIBarButtonItemStylePlain target:self action:@selector(syncPeripheral)];
     } else {
-        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
-            initWithTitle:@"Connect"
-                    style:UIBarButtonItemStylePlain
-                   target:self
-                   action:@selector(connectPeripheral)];
+        self.navigationItem.rightBarButtonItem =
+            [[UIBarButtonItem alloc] initWithTitle:@"Connect" style:UIBarButtonItemStylePlain target:self action:@selector(connectPeripheral)];
     }
 
-    [self.navigationItem.rightBarButtonItem
-        setTintColor:[BXStyling lightColor]];
+    [self.navigationItem.rightBarButtonItem setTintColor:[BXStyling lightColor]];
 }
 
 #pragma mark - Handle Page Switching
@@ -332,11 +332,7 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
     NSInteger index = segmentedControl.selectedSegmentIndex;
     UIViewController *vc = _pageViewChildren[index];
 
-    [_pageViewController
-        setViewControllers:[NSArray arrayWithObject:vc]
-                 direction:UIPageViewControllerNavigationDirectionForward
-                  animated:NO
-                completion:nil];
+    [_pageViewController setViewControllers:[NSArray arrayWithObject:vc] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
 }
 
 #pragma mark - Constraints
@@ -345,48 +341,29 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
     self.view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
 
     [_pageViewController.view setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [_pageViewSegmentedSwitcher
-        setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [_pageViewSegmentedSwitcher setTranslatesAutoresizingMaskIntoConstraints:NO];
 
     UIView *pageView = _pageViewController.view;
-    NSDictionary *views =
-        NSDictionaryOfVariableBindings(pageView, _pageViewSegmentedSwitcher);
+    NSDictionary *views = NSDictionaryOfVariableBindings(pageView, _pageViewSegmentedSwitcher);
 
-    NSDictionary *metrics = @{ @"margin" : @(20) };
+    NSDictionary *metrics = @{ @"margin": @(20) };
 
     [self.view
         addConstraints:
-            [NSLayoutConstraint
-                constraintsWithVisualFormat:
-                    @"V:|-[pageView]-[_pageViewSegmentedSwitcher]-margin-|"
-                                    options:0
-                                    metrics:metrics
-                                      views:views]];
+            [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[pageView]-[_pageViewSegmentedSwitcher]-margin-|" options:0 metrics:metrics views:views]];
 
-    [self.view
-        addConstraints:[NSLayoutConstraint
-                           constraintsWithVisualFormat:@"H:|-[pageView]-|"
-                                               options:0
-                                               metrics:metrics
-                                                 views:views]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[pageView]-|" options:0 metrics:metrics views:views]];
 
     [self.view addConstraints:
-                   [NSLayoutConstraint
-                       constraintsWithVisualFormat:
-                           @"H:|-margin-[_pageViewSegmentedSwitcher]-margin-|"
-                                           options:0
-                                           metrics:metrics
-                                             views:views]];
+                   [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-margin-[_pageViewSegmentedSwitcher]-margin-|" options:0 metrics:metrics views:views]];
 
-    [self.view
-        addConstraint:[NSLayoutConstraint
-                          constraintWithItem:_pageViewSegmentedSwitcher
-                                   attribute:NSLayoutAttributeHeight
-                                   relatedBy:NSLayoutRelationEqual
-                                      toItem:nil
-                                   attribute:NSLayoutAttributeNotAnAttribute
-                                  multiplier:0
-                                    constant:35.0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_pageViewSegmentedSwitcher
+                                                          attribute:NSLayoutAttributeHeight
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:nil
+                                                          attribute:NSLayoutAttributeNotAnAttribute
+                                                         multiplier:0
+                                                           constant:35.0]];
 }
 
 @end

@@ -18,15 +18,12 @@
 
 @implementation AppDelegate
 
-- (BOOL)application:(UIApplication *)application
-    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    self.window =
-        [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window setTintColor:[BXStyling lightColor]];
     [self.window makeKeyAndVisible];
-    self.window.rootViewController = [[BXNavigationController alloc]
-        initWithRootViewController:[[BXDashboardViewController alloc] init]];
+    self.window.rootViewController = [[BXNavigationController alloc] initWithRootViewController:[[BXDashboardViewController alloc] init]];
     return YES;
 }
 

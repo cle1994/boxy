@@ -1,0 +1,29 @@
+//
+//  BXHomeCurrentWorkoutViewController.h
+//  Boxy
+//
+//  Created by Christian Le on 11/25/15.
+//  Copyright © 2015 christianle. All rights reserved.
+//
+
+@import UIKit;
+
+#import "BXHomeViewController.h"
+
+typedef NS_ENUM(NSInteger, BXHomeActionType) { BXHomeActionTypeNone, BXHomeActionTypeTwitter, BXHomeActionTypeCurrent };
+
+@protocol BXHomeWorkoutViewControllerDelegate<NSObject>
+
+- (void)updateCurrentWorkoutAtIndexPath:(NSIndexPath *)indexPath;
+- (void)refreshCurrentWorkout;
+
+@end
+
+@interface BXHomeWorkoutViewController : UIViewController<BXHomeWorkoutViewControllerDelegate>
+
+@property (strong, nonatomic) id<BXHomeViewControllerDelegate> delegate;
+
+- (instancetype)initWithAction:(BXHomeActionType)action AndTitle:(NSString *)title;
+- (CGFloat)getViewHeight;
+
+@end

@@ -8,8 +8,10 @@
 
 @import Foundation;
 
-@protocol BXDashboardBLEDelegate<NSObject>
+@protocol BXDashboardDelegate<NSObject>
 
 - (void)sendPeripheralRequest:(NSString *)request;
+- (void)sendWorkout:(NSArray *)workout;
+- (void)postToTwitter:(NSString *)message;
 
 @end

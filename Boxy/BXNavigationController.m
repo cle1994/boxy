@@ -14,9 +14,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationBar.barTintColor = [BXStyling darkColor];
-    self.navigationBar.titleTextAttributes = @{
-        NSForegroundColorAttributeName: [BXStyling lightColor]
-    };
+    self.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName: [BXStyling lightColor]};
     self.navigationBar.translucent = NO;
     self.navigationBar.barStyle = UIBarStyleBlack;
 }
