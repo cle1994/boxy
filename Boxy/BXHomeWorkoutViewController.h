@@ -22,8 +22,9 @@ typedef NS_ENUM(NSInteger, BXHomeActionType) { BXHomeActionTypeNone, BXHomeActio
 @interface BXHomeWorkoutViewController : UIViewController<BXHomeWorkoutViewControllerDelegate>
 
 @property (strong, nonatomic) id<BXHomeViewControllerDelegate> delegate;
+@property (strong, nonatomic) NSMutableArray *workouts;
 
-- (instancetype)initWithAction:(BXHomeActionType)action AndTitle:(NSString *)title;
+- (instancetype)initWithAction:(BXHomeActionType)action AndTitle:(NSString *)title AndWorkouts:(NSMutableArray *)workouts;
 - (CGFloat)getViewHeight;
 
 @end

@@ -41,6 +41,11 @@
 @property (nonatomic) int messageIndex;
 @property (nonatomic) BOOL messageComplete;
 
+// BLE Receive
+@property (strong, nonatomic) NSMutableArray *receivedWorkout;
+@property (nonatomic) int receivedCount;
+@property (nonatomic) BOOL receivedComplete;
+
 @end
 
 NSString *const UUIDPrefKey = @"UUIDPrefKey";
@@ -146,7 +151,75 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
 }
 
 - (void)syncPeripheral {
-    [self sendPeripheralRequest:@"d"];
+    [self sendPeripheralRequest:@"D"];
+}
+
+- (void)bleDidReceiveDataString:(NSString *)s {
+    if ([[s substringToIndex:1] isEqualToString:@"R"]) {
+        int ack = [[s substringFromIndex:1] intValue];
+        _messageIndex = ack + 1;
+
+        if (ack == [_message count] - 1) {
+            _messageComplete = YES;
+            [_ble write:[@"C" dataUsingEncoding:NSUTF8StringEncoding]];
+        } else {
+            [_ble write:[_message[_messageIndex] dataUsingEncoding:NSUTF8StringEncoding]];
+        }
+    } else if ([[s substringToIndex:1] isEqualToString:@"S"] || [[s substringToIndex:1] isEqualToString:@"C"]) {
+        if ([[s substringToIndex:1] isEqualToString:@"S"]) {
+            _receivedWorkout = [[NSMutableArray alloc] init];
+            _receivedCount = [[s substringWithRange:NSMakeRange(1, 1)] intValue];
+            _receivedComplete = NO;
+        } else if ([[s substringToIndex:1] isEqualToString:@"C"]) {
+            if ([[s substringWithRange:NSMakeRange(1, 1)] intValue] == _receivedCount) {
+                _receivedComplete = YES;
+            }
+        }
+
+        s = [s substringFromIndex:3];
+        NSString *tmp = @"";
+        NSString *title = @"";
+        int weight = 0;
+        int sets = 0;
+        int reps = 0;
+        int counter = 0;
+        for (int i = 0; i < [s length]; i++) {
+            NSString *ch = [s substringWithRange:NSMakeRange(i, 1)];
+            if ([ch isEqualToString:@"-"]) {
+                if ([tmp isEqualToString:@"S"]) {
+                    title = @"Squats";
+                } else if ([tmp isEqualToString:@"O"]) {
+                    title = @"OH Press";
+                } else if ([tmp isEqualToString:@"D"]) {
+                    title = @"Deadlift";
+                } else if ([tmp isEqualToString:@"B"]) {
+                    title = @"Benchpress";
+                } else if ([tmp isEqualToString:@"R"]) {
+                    title = @"Row";
+                } else if (counter == 1) {
+                    weight = [tmp intValue];
+                } else if (counter == 2) {
+                    sets = [tmp intValue];
+                } else if (counter == 3) {
+                    reps = [tmp intValue];
+                }
+                tmp = @"";
+                counter++;
+
+                if (counter == 4) {
+                    counter = 0;
+                    [_receivedWorkout addObject:@{ @"title": title, @"weight": @(weight), @"sets": @(sets), @"reps": @(reps) }];
+                    if (_receivedComplete) {
+                        _homeViewController.previousWorkout = _homeViewController.currentWorkout;
+                        _homeViewController.currentWorkout = _receivedWorkout;
+                        [_homeViewController updateWorkoutsOnView];
+                    }
+                }
+            } else {
+                tmp = [tmp stringByAppendingString:ch];
+            }
+        }
+    }
 }
 
 - (void)launchSettings {
@@ -188,15 +261,72 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
     NSString *s = [[NSString alloc] initWithData:d encoding:NSUTF8StringEncoding];
 
     NSLog(@"%@", s);
-    if ([[s substringToIndex:1] isEqualToString:@"R"]) {
+    if ([[s substringToIndex:1] isEqualToString:@"A"]) {
         int ack = [[s substringFromIndex:1] intValue];
         _messageIndex = ack + 1;
 
         if (ack == [_message count] - 1) {
             _messageComplete = YES;
-            [_ble write:[@"C" dataUsingEncoding:NSUTF8StringEncoding]];
+            _messageIndex = 0;
+            [_ble write:[@"F" dataUsingEncoding:NSUTF8StringEncoding]];
         } else {
             [_ble write:[_message[_messageIndex] dataUsingEncoding:NSUTF8StringEncoding]];
+        }
+    } else if ([[s substringToIndex:1] isEqualToString:@"S"] || [[s substringToIndex:1] isEqualToString:@"C"]) {
+        if ([[s substringToIndex:1] isEqualToString:@"S"]) {
+            _receivedWorkout = [[NSMutableArray alloc] init];
+            _receivedCount = [[s substringWithRange:NSMakeRange(1, 1)] intValue];
+            _receivedComplete = NO;
+        } else if ([[s substringToIndex:1] isEqualToString:@"C"]) {
+            if ([[s substringWithRange:NSMakeRange(1, 1)] intValue] == _receivedCount) {
+                _receivedComplete = YES;
+            }
+        }
+
+        s = [s substringFromIndex:3];
+        NSString *tmp = @"";
+        NSString *title = @"";
+        int weight = 0;
+        int sets = 0;
+        int reps = 0;
+        int counter = 0;
+        for (int i = 0; i < [s length]; i++) {
+            NSString *ch = [s substringWithRange:NSMakeRange(i, 1)];
+            if ([ch isEqualToString:@"-"]) {
+                if (counter == 0) {
+                    if ([tmp isEqualToString:@"S"]) {
+                        title = @"Squats";
+                    } else if ([tmp isEqualToString:@"O"]) {
+                        title = @"OH Press";
+                    } else if ([tmp isEqualToString:@"D"]) {
+                        title = @"Deadlift";
+                    } else if ([tmp isEqualToString:@"B"]) {
+                        title = @"Benchpress";
+                    } else if ([tmp isEqualToString:@"R"]) {
+                        title = @"Row";
+                    }
+                } else if (counter == 1) {
+                    weight = [tmp intValue];
+                } else if (counter == 2) {
+                    sets = [tmp intValue];
+                } else if (counter == 3) {
+                    reps = [tmp intValue];
+                }
+                tmp = @"";
+                counter++;
+
+                if (counter == 4) {
+                    counter = 0;
+                    [_receivedWorkout addObject:@{ @"title": title, @"weight": @(weight), @"sets": @(sets), @"reps": @(reps) }];
+                    if (_receivedComplete) {
+                        _homeViewController.previousWorkout = _homeViewController.currentWorkout;
+                        _homeViewController.currentWorkout = _receivedWorkout;
+                        [_homeViewController updateWorkoutsOnView];
+                    }
+                }
+            } else {
+                tmp = [tmp stringByAppendingString:ch];
+            }
         }
     }
 

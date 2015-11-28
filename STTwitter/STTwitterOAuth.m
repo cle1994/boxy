@@ -673,7 +673,7 @@
         NSArray *kv = [s componentsSeparatedByString:@"="];
         NSAssert([kv count] == 2, @"-- bad length");
         if([kv count] != 2) continue;
-        NSString *value = [kv[1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]; // use raw parameters for signing
+        NSString *value = [kv[1] stringByRemovingPercentEncoding];
         [ma addObject:@{kv[0] : value}];
     }
     

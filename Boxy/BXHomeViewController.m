@@ -12,8 +12,8 @@
 
 @interface BXHomeViewController ()<BXHomeViewControllerDelegate>
 
-@property (strong, nonatomic) BXHomeWorkoutViewController *currentWorkout;
-@property (strong, nonatomic) BXHomeWorkoutViewController *previousWorkout;
+@property (strong, nonatomic) BXHomeWorkoutViewController *currentWorkoutView;
+@property (strong, nonatomic) BXHomeWorkoutViewController *previousWorkoutView;
 
 @end
 
@@ -21,19 +21,32 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        _currentWorkout = [[BXHomeWorkoutViewController alloc] initWithAction:BXHomeActionTypeCurrent AndTitle:@"Next Workout"];
-        _currentWorkout.delegate = self;
+        NSMutableArray *currentWorkout = [[NSMutableArray alloc] init];
+        [currentWorkout addObject:@{ @"title": @"Squat", @"weight": @(200), @"sets": @(4), @"reps": @(12) }];
+        [currentWorkout addObject:@{ @"title": @"OH Press", @"weight": @(150), @"sets": @(3), @"reps": @(8) }];
+        [currentWorkout addObject:@{ @"title": @"Deadlift", @"weight": @(250), @"sets": @(3), @"reps": @(3) }];
 
-        _previousWorkout = [[BXHomeWorkoutViewController alloc] initWithAction:BXHomeActionTypeTwitter AndTitle:@"Previous Workout"];
-        _previousWorkout.delegate = self;
+        NSMutableArray *previousWorkout = [[NSMutableArray alloc] init];
+        [previousWorkout addObject:@{ @"title": @"Squat", @"weight": @(200), @"sets": @(4), @"reps": @(12) }];
+        [previousWorkout addObject:@{ @"title": @"Bench", @"weight": @(200), @"sets": @(3), @"reps": @(3) }];
+        [previousWorkout addObject:@{ @"title": @"Row", @"weight": @(250), @"sets": @(3), @"reps": @(10) }];
 
-        [self addChildViewController:_currentWorkout];
-        [self.view addSubview:_currentWorkout.view];
-        [_currentWorkout didMoveToParentViewController:self];
+        _currentWorkoutView = [[BXHomeWorkoutViewController alloc] initWithAction:BXHomeActionTypeCurrent AndTitle:@"Next Workout" AndWorkouts:currentWorkout];
+        _currentWorkoutView.delegate = self;
+        self.currentWorkout = currentWorkout;
 
-        [self addChildViewController:_previousWorkout];
-        [self.view addSubview:_previousWorkout.view];
-        [_previousWorkout didMoveToParentViewController:self];
+        _previousWorkoutView =
+            [[BXHomeWorkoutViewController alloc] initWithAction:BXHomeActionTypeTwitter AndTitle:@"Previous Workout" AndWorkouts:previousWorkout];
+        _previousWorkoutView.delegate = self;
+        self.previousWorkout = previousWorkout;
+
+        [self addChildViewController:_currentWorkoutView];
+        [self.view addSubview:_currentWorkoutView.view];
+        [_currentWorkoutView didMoveToParentViewController:self];
+
+        [self addChildViewController:_previousWorkoutView];
+        [self.view addSubview:_previousWorkoutView.view];
+        [_previousWorkoutView didMoveToParentViewController:self];
     }
 
     return self;
@@ -47,11 +60,16 @@
     [super viewDidLayoutSubviews];
 
     CGSize viewSize = self.view.bounds.size;
-    CGFloat currentWorkoutHeight = [_currentWorkout getViewHeight];
-    CGFloat previousWorkoutHeight = [_previousWorkout getViewHeight];
+    CGFloat currentWorkoutHeight = [_currentWorkoutView getViewHeight];
+    CGFloat previousWorkoutHeight = [_previousWorkoutView getViewHeight];
 
-    _currentWorkout.view.frame = CGRectMake(0, 0, viewSize.width, currentWorkoutHeight);
-    _previousWorkout.view.frame = CGRectMake(0, currentWorkoutHeight, viewSize.width, previousWorkoutHeight);
+    _currentWorkoutView.view.frame = CGRectMake(0, 0, viewSize.width, currentWorkoutHeight);
+    _previousWorkoutView.view.frame = CGRectMake(0, currentWorkoutHeight, viewSize.width, previousWorkoutHeight);
+}
+
+- (void)updateWorkoutsOnView {
+    _currentWorkoutView.workouts = _currentWorkout;
+    _previousWorkoutView.workouts = _previousWorkout;
 }
 
 #pragma mark - BXHomeViewControllerDelegate

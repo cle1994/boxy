@@ -23,5 +23,9 @@
 
 @property (strong, nonatomic) id<BXDashboardDelegate> delegate;
 @property (nonatomic) int pageIndex;
+@property (strong, nonatomic) NSMutableArray *currentWorkout;
+@property (strong, nonatomic) NSMutableArray *previousWorkout;
+
+- (void)updateWorkoutsOnView;
 
 @end

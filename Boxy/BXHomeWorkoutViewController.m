@@ -21,7 +21,6 @@ typedef NS_ENUM(NSInteger, BXStringGeneratorType) {
 
 @property (strong, nonatomic) UITableView *workoutTableView;
 @property (strong, nonatomic) UILabel *workoutHeaderView;
-@property (strong, nonatomic) NSMutableArray *workouts;
 @property (strong, nonatomic) UIButton *actionButton;
 @property (strong, nonatomic) UIButton *secondaryActionButton;
 @property (nonatomic) BXHomeActionType actionType;
@@ -35,8 +34,9 @@ static CGFloat BXHeaderHeight = 40.0;
 static CGFloat BXButtonHeight = 35.0;
 
 @implementation BXHomeWorkoutViewController
+@synthesize workouts = _workouts;
 
-- (instancetype)initWithAction:(BXHomeActionType)action AndTitle:(NSString *)title {
+- (instancetype)initWithAction:(BXHomeActionType)action AndTitle:(NSString *)title AndWorkouts:(NSMutableArray *)workouts {
     if (self = [super initWithNibName:nil bundle:nil]) {
         _workoutTableView = [[UITableView alloc] init];
         _workoutTableView.delegate = self;
@@ -51,12 +51,7 @@ static CGFloat BXButtonHeight = 35.0;
         _workoutHeaderView.textColor = [BXStyling lightColor];
         _workoutHeaderView.backgroundColor = [BXStyling headerBackgroundColor];
 
-        _workouts = [[NSMutableArray alloc] init];
-        [_workouts addObject:@{ @"title": @"Squat", @"weight": @(250), @"sets": @(5), @"reps": @(5) }];
-        [_workouts addObject:@{ @"title": @"OH Press", @"weight": @(250), @"sets": @(4), @"reps": @(4) }];
-        [_workouts addObject:@{ @"title": @"Deadlift", @"weight": @(250), @"sets": @(3), @"reps": @(3) }];
-        [_workouts addObject:@{ @"title": @"Bench", @"weight": @(250), @"sets": @(2), @"reps": @(2) }];
-        [_workouts addObject:@{ @"title": @"Row", @"weight": @(250), @"sets": @(1), @"reps": @(1) }];
+        _workouts = workouts;
 
         self.view.backgroundColor = [UIColor whiteColor];
         [self.view addSubview:_workoutHeaderView];
@@ -82,7 +77,7 @@ static CGFloat BXButtonHeight = 35.0;
 
             _secondaryActionButton = [UIButton buttonWithType:UIButtonTypeCustom];
             _secondaryActionButton.backgroundColor = [BXStyling primaryColor];
-            [_secondaryActionButton setTitle:@"Sync" forState:UIControlStateNormal];
+            [_secondaryActionButton setTitle:@"Send" forState:UIControlStateNormal];
             [_secondaryActionButton addTarget:self action:@selector(actionSyncWorkout) forControlEvents:UIControlEventTouchUpInside];
 
             [self.view addSubview:_actionButton];
@@ -97,7 +92,7 @@ static CGFloat BXButtonHeight = 35.0;
 }
 
 - (instancetype)init {
-    return [self initWithAction:BXHomeActionTypeNone AndTitle:@""];
+    return [self initWithAction:BXHomeActionTypeNone AndTitle:@"" AndWorkouts:nil];
 }
 
 - (void)viewDidLoad {
@@ -124,6 +119,11 @@ static CGFloat BXButtonHeight = 35.0;
     }
 }
 
+- (void)setWorkouts:(NSMutableArray *)workouts {
+    _workouts = workouts;
+    [self refreshCurrentWorkout];
+}
+
 - (CGFloat)getViewHeight {
     CGFloat buttonHeight = 0;
     if (_actionType != BXHomeActionTypeNone) {
@@ -131,6 +131,16 @@ static CGFloat BXButtonHeight = 35.0;
     }
 
     return (BXMargin * 2) + BXHeaderHeight + (BXTableCellHeight * [_workouts count]) + buttonHeight;
+}
+
+- (NSString *)generateAckStringForIndex:(int)index AndMessage:(NSMutableArray *)message {
+    if (index == 0) {
+        NSString *ack = [[@"W" stringByAppendingString:[@([message count]) stringValue]] stringByAppendingString:@"-"];
+        return [ack stringByAppendingString:message[0]];
+    } else {
+        NSString *ack = [[@"C" stringByAppendingString:[@(index + 1) stringValue]] stringByAppendingString:@"-"];
+        return [ack stringByAppendingString:message[index]];
+    }
 }
 
 - (NSArray *)generateStringMessage:(BXStringGeneratorType)messageType {
@@ -143,23 +153,27 @@ static CGFloat BXButtonHeight = 35.0;
         NSString *type = @"";
         if (messageType == BXStringGeneratorTypeTitle) {
             input = data[@"title"];
-            type = @"T:";
+            type = @"T-";
         } else if (messageType == BXStringGeneratorTypeWeight) {
             input = [NSString stringWithFormat:@"%@", [data objectForKey:@"weight"]];
-            type = @"W:";
+            type = @"W-";
         } else if (messageType == BXStringGeneratorTypeSets) {
             input = [NSString stringWithFormat:@"%@", [data objectForKey:@"sets"]];
-            type = @"S:";
+            type = @"S-";
         } else if (messageType == BXStringGeneratorTypeReps) {
             input = [NSString stringWithFormat:@"%@", [data objectForKey:@"reps"]];
-            type = @"R:";
+            type = @"R-";
         }
 
-        if (concat.length + input.length < 18) {
-            concat = [concat stringByAppendingString:[input stringByAppendingString:@":"]];
+        if (concat.length == 0) {
+            concat = [type copy];
+        }
+
+        if (concat.length + input.length < 15) {
+            concat = [concat stringByAppendingString:[input stringByAppendingString:@"-"]];
         } else {
             [message addObject:concat];
-            concat = [type stringByAppendingString:input];
+            concat = [[type stringByAppendingString:[input stringByAppendingString:@"-"]] copy];
         }
     }
 
@@ -212,6 +226,11 @@ static CGFloat BXButtonHeight = 35.0;
     }
     for (int i = 0; i < [reps count]; i++) {
         [concat addObject:reps[i]];
+    }
+    
+    concat[0] = [self generateAckStringForIndex:0 AndMessage:concat];
+    for (int i = 1; i < [concat count]; i++) {
+        concat[i] = [self generateAckStringForIndex:i AndMessage:concat];
     }
 
     [self.delegate sendWorkout:[concat copy]];
