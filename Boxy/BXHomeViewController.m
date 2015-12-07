@@ -27,9 +27,9 @@
         [currentWorkout addObject:@{ @"title": @"Deadlift", @"weight": @(250), @"sets": @(3), @"reps": @(3) }];
 
         NSMutableArray *previousWorkout = [[NSMutableArray alloc] init];
-        [previousWorkout addObject:@{ @"title": @"Squat", @"weight": @(200), @"sets": @(4), @"reps": @(12) }];
-        [previousWorkout addObject:@{ @"title": @"Bench", @"weight": @(200), @"sets": @(3), @"reps": @(3) }];
-        [previousWorkout addObject:@{ @"title": @"Row", @"weight": @(250), @"sets": @(3), @"reps": @(10) }];
+        [previousWorkout addObject:@{ @"title": @"Squat", @"weight": @(150), @"sets": @(4), @"reps": @(12) }];
+        [previousWorkout addObject:@{ @"title": @"Bench", @"weight": @(100), @"sets": @(3), @"reps": @(3) }];
+        [previousWorkout addObject:@{ @"title": @"Row", @"weight": @(200), @"sets": @(3), @"reps": @(10) }];
 
         _currentWorkoutView = [[BXHomeWorkoutViewController alloc] initWithAction:BXHomeActionTypeCurrent AndTitle:@"Next Workout" AndWorkouts:currentWorkout];
         _currentWorkoutView.delegate = self;

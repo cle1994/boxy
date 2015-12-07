@@ -14,12 +14,12 @@
 #import "BXSettingsViewController.h"
 #import "BXSyncingPopupViewController.h"
 #import "BXStyling.h"
-#import "BLE.h"
+#import "BXBluetoothManager.h"
 
-@interface BXDashboardViewController ()<BLEDelegate>
+@interface BXDashboardViewController ()<BXBluetoothManagerDelegate>
 
 // BLE
-@property (strong, nonatomic) BLE *ble;
+@property (strong, nonatomic) BXBluetoothManager *BLEManager;
 @property (strong, nonatomic) BXConnectViewController *connectViewController;
 @property (strong, nonatomic) NSMutableArray *devices;
 @property (strong, nonatomic) NSString *lastUUID;
@@ -73,16 +73,14 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    if (_ble == nil) {
-        _ble = [[BLE alloc] init];
-        _ble.delegate = self;
-        [_ble controlSetup];
+    if (_BLEManager == nil) {
+        _BLEManager = [[BXBluetoothManager alloc] init];
+        _BLEManager.uartDelegate = self;
     }
 
     _lastUUID = [[NSUserDefaults standardUserDefaults] objectForKey:UUIDPrefKey];
 
     [self scanForDevicesAndConnectLast:YES];
-
     [self setupPageView];
 }
 
@@ -154,74 +152,6 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
     [self sendPeripheralRequest:@"D"];
 }
 
-- (void)bleDidReceiveDataString:(NSString *)s {
-    if ([[s substringToIndex:1] isEqualToString:@"R"]) {
-        int ack = [[s substringFromIndex:1] intValue];
-        _messageIndex = ack + 1;
-
-        if (ack == [_message count] - 1) {
-            _messageComplete = YES;
-            [_ble write:[@"C" dataUsingEncoding:NSUTF8StringEncoding]];
-        } else {
-            [_ble write:[_message[_messageIndex] dataUsingEncoding:NSUTF8StringEncoding]];
-        }
-    } else if ([[s substringToIndex:1] isEqualToString:@"S"] || [[s substringToIndex:1] isEqualToString:@"C"]) {
-        if ([[s substringToIndex:1] isEqualToString:@"S"]) {
-            _receivedWorkout = [[NSMutableArray alloc] init];
-            _receivedCount = [[s substringWithRange:NSMakeRange(1, 1)] intValue];
-            _receivedComplete = NO;
-        } else if ([[s substringToIndex:1] isEqualToString:@"C"]) {
-            if ([[s substringWithRange:NSMakeRange(1, 1)] intValue] == _receivedCount) {
-                _receivedComplete = YES;
-            }
-        }
-
-        s = [s substringFromIndex:3];
-        NSString *tmp = @"";
-        NSString *title = @"";
-        int weight = 0;
-        int sets = 0;
-        int reps = 0;
-        int counter = 0;
-        for (int i = 0; i < [s length]; i++) {
-            NSString *ch = [s substringWithRange:NSMakeRange(i, 1)];
-            if ([ch isEqualToString:@"-"]) {
-                if ([tmp isEqualToString:@"S"]) {
-                    title = @"Squats";
-                } else if ([tmp isEqualToString:@"O"]) {
-                    title = @"OH Press";
-                } else if ([tmp isEqualToString:@"D"]) {
-                    title = @"Deadlift";
-                } else if ([tmp isEqualToString:@"B"]) {
-                    title = @"Benchpress";
-                } else if ([tmp isEqualToString:@"R"]) {
-                    title = @"Row";
-                } else if (counter == 1) {
-                    weight = [tmp intValue];
-                } else if (counter == 2) {
-                    sets = [tmp intValue];
-                } else if (counter == 3) {
-                    reps = [tmp intValue];
-                }
-                tmp = @"";
-                counter++;
-
-                if (counter == 4) {
-                    counter = 0;
-                    [_receivedWorkout addObject:@{ @"title": title, @"weight": @(weight), @"sets": @(sets), @"reps": @(reps) }];
-                    if (_receivedComplete) {
-                        _homeViewController.previousWorkout = _homeViewController.currentWorkout;
-                        _homeViewController.currentWorkout = _receivedWorkout;
-                        [_homeViewController updateWorkoutsOnView];
-                    }
-                }
-            } else {
-                tmp = [tmp stringByAppendingString:ch];
-            }
-        }
-    }
-}
-
 - (void)launchSettings {
     _settingsViewController = [[BXSettingsViewController alloc] init];
 
@@ -238,10 +168,10 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
                                           }];
 }
 
-#pragma mark - BLE Delegate
+#pragma mark - BluetoothManagerDelegate
 
-- (void)bleDidConnect {
-    _lastUUID = [self getUUIDStringForPeripheral:_ble.activePeripheral];
+- (void)didDeviceConnectWithPeripheral:(NSString *)peripheralName {
+    _lastUUID = [self getUUIDStringForPeripheral:_BLEManager.bluetoothPeripheral];
     [[NSUserDefaults standardUserDefaults] setObject:_lastUUID forKey:UUIDPrefKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
 
@@ -252,25 +182,32 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
     }
 }
 
-- (void)bleDidDisconnect {
+- (void)didDeviceDisconnect {
     [self updateNavigationWithPeripheralStatus:NO];
 }
 
-- (void)bleDidReceiveData:(unsigned char *)data length:(int)length {
-    NSData *d = [NSData dataWithBytes:data length:length];
-    NSString *s = [[NSString alloc] initWithData:d encoding:NSUTF8StringEncoding];
+- (void)didDiscoverUARTService:(CBService *)uartService {
+}
 
+- (void)didDiscoverRXCharacteristic:(CBCharacteristic *)rxCharacteristic {
+}
+
+- (void)didDiscoverTXCharacteristic:(CBCharacteristic *)txCharacteristic {
+}
+
+- (void)didReceiveTXNotification:(NSData *)data {
+    NSString *s = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"%@", s);
-    if ([[s substringToIndex:1] isEqualToString:@"A"]) {
+    if ([[s substringToIndex:1] isEqualToString:@"A"] && ![[s substringToIndex:2] isEqualToString:@"AT"]) {
         int ack = [[s substringFromIndex:1] intValue];
         _messageIndex = ack + 1;
 
         if (ack == [_message count] - 1) {
             _messageComplete = YES;
             _messageIndex = 0;
-            [_ble write:[@"F" dataUsingEncoding:NSUTF8StringEncoding]];
+            [_BLEManager writeRXValue:@"F"];
         } else {
-            [_ble write:[_message[_messageIndex] dataUsingEncoding:NSUTF8StringEncoding]];
+            [_BLEManager writeRXValue:_message[_messageIndex]];
         }
     } else if ([[s substringToIndex:1] isEqualToString:@"S"] || [[s substringToIndex:1] isEqualToString:@"C"]) {
         if ([[s substringToIndex:1] isEqualToString:@"S"]) {
@@ -319,8 +256,7 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
                     counter = 0;
                     [_receivedWorkout addObject:@{ @"title": title, @"weight": @(weight), @"sets": @(sets), @"reps": @(reps) }];
                     if (_receivedComplete) {
-                        _homeViewController.previousWorkout = _homeViewController.currentWorkout;
-                        _homeViewController.currentWorkout = _receivedWorkout;
+                        _homeViewController.previousWorkout = _receivedWorkout;
                         [_homeViewController updateWorkoutsOnView];
                     }
                 }
@@ -333,7 +269,12 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
     [_graphViewController setDataCount:20 range:100.0];
 }
 
-- (void)bleDidUpdateRSSI:(NSNumber *)rssi {
+- (void)didError:(NSString *)errorMessage {
+    NSLog(@"%@", errorMessage);
+}
+
+- (void)didFindNewPeripherals:(NSMutableArray *)newPeripherals {
+    _devices = newPeripherals;
 }
 
 - (NSString *)getUUIDStringForPeripheral:(CBPeripheral *)peripheral {
@@ -347,48 +288,14 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
 
     _isFindingLast = last;
 
-    if (_ble.activePeripheral) {
-        if (_ble.activePeripheral.state == CBPeripheralStateConnected) {
-            [[_ble CM] cancelPeripheralConnection:[_ble activePeripheral]];
-            return;
-        }
+    if ([_BLEManager scanForPeripherals:YES]) {
+        [NSTimer scheduledTimerWithTimeInterval:(float)2.0 target:self selector:@selector(connectionTimer:) userInfo:nil repeats:NO];
     }
-
-    if (_ble.peripherals) {
-        _ble.peripherals = nil;
-    }
-
-    [_ble findBLEPeripherals:3];
-
-    [NSTimer scheduledTimerWithTimeInterval:(float)3.0 target:self selector:@selector(connectionTimer:) userInfo:nil repeats:NO];
 }
 
 - (void)connectionTimer:(NSTimer *)timer {
     NSLog(@"Checking if devices found...");
-
-    if (_ble.peripherals.count > 0) {
-        [_devices removeAllObjects];
-
-        if (_isFindingLast) {
-            for (int i = 0; i < _ble.peripherals.count; i++) {
-                CBPeripheral *peripheral = [_ble.peripherals objectAtIndex:i];
-                NSString *peripheralUUID = [self getUUIDStringForPeripheral:peripheral];
-                if (peripheralUUID || ![peripheralUUID isKindOfClass:[NSNull class]]) {
-                    if ([_lastUUID isEqualToString:peripheralUUID]) {
-                        [_ble connectPeripheral:peripheral];
-                    }
-                }
-            }
-        } else {
-            for (int i = 0; i < _ble.peripherals.count; i++) {
-                CBPeripheral *peripheral = [_ble.peripherals objectAtIndex:i];
-                NSString *peripheralUUID = [self getUUIDStringForPeripheral:peripheral];
-                if (peripheralUUID || ![peripheralUUID isKindOfClass:[NSNull class]]) {
-                    [_devices addObject:peripheral];
-                }
-            }
-        }
-    }
+    [_BLEManager scanForPeripherals:NO];
 
     if ([self presentedViewController] != nil) {
         NSLog(@"Sending devices to modal...");
@@ -396,15 +303,11 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
         [_connectViewController setDevices:_devices];
     }
 
-    [self updateNavigationWithPeripheralStatus:_ble.isConnected];
+    [self updateNavigationWithPeripheralStatus:[_BLEManager isConnectedToPeripheral]];
 }
 
 - (void)connectToDeviceAtIndex:(NSInteger)index {
-    if (_ble.isConnected) {
-        [[_ble CM] cancelPeripheralConnection:[_ble activePeripheral]];
-    }
-
-    [_ble connectPeripheral:_devices[index]];
+    [_BLEManager connectDevice:_devices[index]];
 }
 
 #pragma mark - Dashboard Delegate
@@ -413,14 +316,14 @@ NSString *const UUIDPrefKey = @"UUIDPrefKey";
     if (request.length > 20) {
         request = [request substringToIndex:20];
     }
-    [_ble write:[request dataUsingEncoding:NSUTF8StringEncoding]];
+    [_BLEManager writeRXValue:request];
 }
 
 - (void)sendWorkout:(NSArray *)workout {
     _message = workout;
     _messageIndex = 0;
     _messageComplete = false;
-    [_ble write:[workout[0] dataUsingEncoding:NSUTF8StringEncoding]];
+    [_BLEManager writeRXValue:_message[0]];
 }
 
 - (void)postToTwitter:(NSString *)message {

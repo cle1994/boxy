@@ -6,10 +6,11 @@
 //  Copyright © 2015 christianle. All rights reserved.
 //
 
+@import CoreBluetooth;
+
 #import "BXConnectViewController.h"
 #import "BXSyncingPopupViewController.h"
 #import "BXStyling.h"
-#import "BLE.h"
 
 @interface BXConnectViewController ()<UITableViewDataSource, UITableViewDelegate, UINavigationControllerDelegate>
 

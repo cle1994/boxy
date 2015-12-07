@@ -18,7 +18,7 @@
 		AA68B0BF1BEC358E0095984A /* BXStyling.m in Sources */ = {isa = PBXBuildFile; fileRef = AA68B0BE1BEC358E0095984A /* BXStyling.m */; };
 		AA68B0C61BEC39BB0095984A /* BXNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA68B0C51BEC39BB0095984A /* BXNavigationController.m */; };
 		AA68B0C91BEC3C110095984A /* BXConnectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA68B0C81BEC3C110095984A /* BXConnectViewController.m */; };
-		AA68B0D01BEC3E640095984A /* BLE.m in Sources */ = {isa = PBXBuildFile; fileRef = AA68B0CE1BEC3E640095984A /* BLE.m */; };
+		AAA0F1041C14E4830024C72D /* BXBluetoothManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AAA0F1031C14E4830024C72D /* BXBluetoothManager.m */; };
 		AAD6EA461BF9D49C00C60A7C /* FLAnimatedImage.m in Sources */ = {isa = PBXBuildFile; fileRef = AAD6EA431BF9D49C00C60A7C /* FLAnimatedImage.m */; };
 		AAD6EA471BF9D49C00C60A7C /* FLAnimatedImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = AAD6EA451BF9D49C00C60A7C /* FLAnimatedImageView.m */; };
 		AAD6EA491BF9D4B700C60A7C /* AFNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAD6EA481BF9D4B700C60A7C /* AFNetworking.framework */; };
@@ -86,9 +86,8 @@
 		AA68B0C51BEC39BB0095984A /* BXNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXNavigationController.m; sourceTree = "<group>"; };
 		AA68B0C71BEC3C110095984A /* BXConnectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXConnectViewController.h; sourceTree = "<group>"; };
 		AA68B0C81BEC3C110095984A /* BXConnectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXConnectViewController.m; sourceTree = "<group>"; };
-		AA68B0CD1BEC3E640095984A /* BLE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BLE.h; path = BLE/BLE.h; sourceTree = SOURCE_ROOT; };
-		AA68B0CE1BEC3E640095984A /* BLE.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BLE.m; path = BLE/BLE.m; sourceTree = SOURCE_ROOT; };
-		AA68B0CF1BEC3E640095984A /* BLEDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BLEDefines.h; path = BLE/BLEDefines.h; sourceTree = SOURCE_ROOT; };
+		AAA0F1021C14E4830024C72D /* BXBluetoothManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBluetoothManager.h; sourceTree = "<group>"; };
+		AAA0F1031C14E4830024C72D /* BXBluetoothManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBluetoothManager.m; sourceTree = "<group>"; };
 		AAD6EA421BF9D49C00C60A7C /* FLAnimatedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLAnimatedImage.h; sourceTree = "<group>"; };
 		AAD6EA431BF9D49C00C60A7C /* FLAnimatedImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLAnimatedImage.m; sourceTree = "<group>"; };
 		AAD6EA441BF9D49C00C60A7C /* FLAnimatedImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLAnimatedImageView.h; sourceTree = "<group>"; };
@@ -215,12 +214,12 @@
 				AA68B0AD1BEC34E60095984A /* AppDelegate.h */,
 				AA68B0AE1BEC34E60095984A /* AppDelegate.m */,
 				AA68B0B01BEC34E60095984A /* Assets.xcassets */,
+				AAA0F1021C14E4830024C72D /* BXBluetoothManager.h */,
+				AAA0F1031C14E4830024C72D /* BXBluetoothManager.m */,
 				AA68B0C71BEC3C110095984A /* BXConnectViewController.h */,
 				AA68B0C81BEC3C110095984A /* BXConnectViewController.m */,
-				AA348DB21C0656E800017F07 /* Dashboard */,
 				AAE702571BF1E9810033ACBC /* BXGraphViewController.h */,
 				AAE702581BF1E9810033ACBC /* BXGraphViewController.m */,
-				AA348DB11C0656D300017F07 /* Home */,
 				AA68B0C41BEC39BB0095984A /* BXNavigationController.h */,
 				AA68B0C51BEC39BB0095984A /* BXNavigationController.m */,
 				AAD6EA4E1BF9E37700C60A7C /* BXSettingsViewController.h */,
@@ -229,7 +228,9 @@
 				AA68B0BE1BEC358E0095984A /* BXStyling.m */,
 				AA08BB781BF56FB700842346 /* BXSyncingPopupViewController.h */,
 				AA08BB791BF56FB700842346 /* BXSyncingPopupViewController.m */,
+				AA348DB21C0656E800017F07 /* Dashboard */,
 				AA68B0C01BEC39090095984A /* Frameworks */,
+				AA348DB11C0656D300017F07 /* Home */,
 				AAF9AEB31BF33DA800C22FFF /* Images */,
 				AA68B0B51BEC34E60095984A /* Info.plist */,
 				AA68B0B21BEC34E60095984A /* LaunchScreen.storyboard */,
@@ -251,7 +252,6 @@
 			children = (
 				AAD6EA511BF9E9DD00C60A7C /* Accounts.framework */,
 				AAD6EA481BF9D4B700C60A7C /* AFNetworking.framework */,
-				AA68B0CC1BEC3E450095984A /* BLE */,
 				AAD6EA4A1BF9D4C300C60A7C /* Charts.framework */,
 				AAF9AEA61BF32F1700C22FFF /* CoreGraphics.framework */,
 				AAF9AEAA1BF3312200C22FFF /* FLAnimatedImage */,
@@ -264,16 +264,6 @@
 				AAD6EA551BF9E9EE00C60A7C /* Twitter.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		AA68B0CC1BEC3E450095984A /* BLE */ = {
-			isa = PBXGroup;
-			children = (
-				AA68B0CD1BEC3E640095984A /* BLE.h */,
-				AA68B0CE1BEC3E640095984A /* BLE.m */,
-				AA68B0CF1BEC3E640095984A /* BLEDefines.h */,
-			);
-			name = BLE;
 			sourceTree = "<group>";
 		};
 		AAD6EA571BF9EA4C00C60A7C /* STTwitter */ = {
@@ -437,6 +427,7 @@
 				AAD6EA831BF9EA4C00C60A7C /* BAVPlistNode.m in Sources */,
 				AAD6EA791BF9EA4C00C60A7C /* NSError+STTwitter.m in Sources */,
 				AAD6EA7C1BF9EA4C00C60A7C /* STTwitterAPI.m in Sources */,
+				AAA0F1041C14E4830024C72D /* BXBluetoothManager.m in Sources */,
 				AA0C156F1BEC866F004A5F50 /* BXDashboardViewController.m in Sources */,
 				AA348DB51C06576700017F07 /* BXHomeWorkoutViewController.m in Sources */,
 				AAD6EA461BF9D49C00C60A7C /* FLAnimatedImage.m in Sources */,
@@ -449,7 +440,6 @@
 				AAD6EA851BF9EA4C00C60A7C /* STHTTPRequest.m in Sources */,
 				AA68B0C91BEC3C110095984A /* BXConnectViewController.m in Sources */,
 				AAD6EA7B1BF9EA4C00C60A7C /* STHTTPRequest+STTwitter.m in Sources */,
-				AA68B0D01BEC3E640095984A /* BLE.m in Sources */,
 				AAD6EA7D1BF9EA4C00C60A7C /* STTwitterAppOnly.m in Sources */,
 				AAD6EA811BF9EA4C00C60A7C /* STTwitterOSRequest.m in Sources */,
 				AAE702591BF1E9810033ACBC /* BXGraphViewController.m in Sources */,
